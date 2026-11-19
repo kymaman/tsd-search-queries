@@ -1,0 +1,453 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>«Поток» · кейс за 2 месяца</title>
+<meta name="description" content="Кейс «Потока»: за два месяца с нуля — 2 121 человек в боте, около 100 новых в день, рекомендации в ответах Алисы и ChatGPT.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: full-screen slide deck with scroll-snap; one idea per slide. Motif: the glowing warm "точка" = the client; cold indigo = нейросети. Single dark look by choice. */
+:root{
+  --bg:#000000; --s1:#181818; --s2:#1F1F1F; --s3:#272727; --line:#313131;
+  --ink:#F4F4F6; --muted:#A1A5AE; --dim:#6E727B;
+  --ai:#8B91FF; --ai-glow:rgba(139,145,255,.55); --ai-soft:rgba(139,145,255,.14);
+  --sun:#FFC24A; --sun-glow:rgba(255,194,74,.6); --sun-ink:#1C1300;
+  --bad:#FF7A6B; --good:#4FD69C;
+  --font:"Manrope", system-ui, "Segoe UI", sans-serif;
+  --mono:"Geist Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --ease:cubic-bezier(0.22,1,0.36,1);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55;overflow:hidden}
+.deck{height:100%;overflow-y:auto;scroll-snap-type:y mandatory;scroll-behavior:smooth;position:relative}
+.slide{min-height:100%;scroll-snap-align:start;position:relative;display:grid;align-content:center;
+  padding-block:80px 88px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow:hidden;isolation:isolate}
+.in-w{width:100%;max-width:1120px;margin:0 auto;display:grid;gap:28px;position:relative;z-index:1}
+h1,h2,h3{margin:0;text-wrap:balance;letter-spacing:-0.025em}
+h1{font-size:60px;line-height:1.04;font-weight:800;max-width:900px}
+h2{font-size:48px;line-height:1.08;font-weight:700;max-width:860px}
+h3{font-size:20px;line-height:1.3;font-weight:600}
+p{margin:0;text-wrap:pretty}
+.lead{font-size:20px;line-height:1.5;color:var(--muted);max-width:720px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ai)}
+.eyebrow.sun{color:var(--sun)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)} .small{font-size:14px} .xs{font-size:12px}
+.sun-t{color:var(--sun);text-shadow:0 0 24px var(--sun-glow)}
+.ai-t{color:var(--ai);text-shadow:0 0 24px var(--ai-glow)}
+.grad{background:linear-gradient(90deg,#FFFFFF,#9B9B9B);-webkit-background-clip:text;background-clip:text;color:transparent}
+:focus-visible{outline:2px solid var(--ai);outline-offset:3px}
+
+/* ambient glows: blurred solid shapes, drifting */
+.orb{position:absolute;border-radius:50%;filter:blur(90px);opacity:.35;z-index:0;pointer-events:none;animation:drift 18s var(--ease) infinite alternate}
+.orb.ai{background:var(--ai)} .orb.sun{background:var(--sun);opacity:.22}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(60px,-40px) scale(1.15)}}
+
+/* the dot motif */
+.dot{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--sun);box-shadow:0 0 0 6px rgba(255,194,74,.12),0 0 28px var(--sun-glow);animation:pulse 2.4s ease-in-out infinite;vertical-align:middle}
+.dot.big{width:22px;height:22px}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 6px rgba(255,194,74,.12),0 0 24px var(--sun-glow)}50%{box-shadow:0 0 0 14px rgba(255,194,74,.05),0 0 48px var(--sun-glow)}}
+
+/* reveal: resting state visible; animation plays when slide becomes active */
+.slide.go .r{animation:rise .9s var(--ease) both;animation-delay:calc(var(--i,0) * 110ms)}
+@keyframes rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+.slide.go .pop{animation:pop .8s var(--ease) both;animation-delay:calc(var(--i,0) * 110ms)}
+@keyframes pop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+
+/* chrome */
+.bar-top{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:3px;z-index:20;background:var(--s2)}
+.bar-top i{display:block;height:100%;width:0;background:var(--ai);box-shadow:0 0 12px var(--ai-glow);transition:width .5s var(--ease)}
+.hud{position:fixed;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;display:flex;justify-content:space-between;align-items:center;gap:12px;pointer-events:none}
+.hud .count{font-family:var(--mono);font-size:12px;color:var(--muted);background:rgba(24,24,24,.8);border:1px solid var(--line);padding:6px 10px;border-radius:8px}
+.hud .nav{display:flex;gap:8px;pointer-events:auto}
+.hud button{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:rgba(24,24,24,.85);color:var(--ink);cursor:pointer;font:600 18px/1 var(--font);transition:transform .3s var(--ease),border-color .3s var(--ease)}
+.hud button:hover{transform:translateY(-2px);border-color:var(--ai)}
+.rail{position:fixed;right:calc(max(16px,env(safe-area-inset-right,0px)) + 2px);top:50%;transform:translateY(-50%);z-index:20;display:grid;gap:7px}
+.rail a{width:6px;height:6px;border-radius:50%;background:var(--s3);display:block;transition:transform .3s var(--ease),background-color .3s var(--ease)}
+.rail a.on{background:var(--sun);transform:scale(1.6);box-shadow:0 0 10px var(--sun-glow)}
+
+/* surfaces */
+.card{background:var(--s1);border:1px solid var(--line);border-radius:20px;padding:24px;display:grid;gap:10px;align-content:start;min-width:0}
+.card.glow{border-color:rgba(139,145,255,.5);box-shadow:0 0 0 1px rgba(139,145,255,.25),0 0 60px -10px var(--ai-glow)}
+.card.sun{border-color:rgba(255,194,74,.55);box-shadow:0 0 0 1px rgba(255,194,74,.25),0 0 60px -10px var(--sun-glow)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.tag{justify-self:start;display:inline-block;font:600 12px/1 var(--mono);letter-spacing:.06em;padding:6px 10px;border-radius:8px;background:var(--ai-soft);color:var(--ai)}
+.tag.sun{background:rgba(255,194,74,.14);color:var(--sun)}
+.tag.bad{background:rgba(255,122,107,.14);color:var(--bad)}
+.tag.good{background:rgba(79,214,156,.14);color:var(--good)}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:14px;font:700 16px/1 var(--font);text-decoration:none;border:0;cursor:pointer;background:var(--sun);color:var(--sun-ink);box-shadow:0 0 40px -6px var(--sun-glow);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 0 60px -4px var(--sun-glow)}
+
+/* cover */
+.cover h1 .sun-t{display:inline}
+.cover .meta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.hint{font-family:var(--mono);font-size:12px;color:var(--dim);display:flex;gap:8px;align-items:center}
+.hint kbd{border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-family:var(--mono);color:var(--muted)}
+
+/* chat */
+.chat{background:var(--s1);border:1px solid var(--line);border-radius:24px;padding:20px;display:grid;gap:14px;max-width:760px;width:100%;box-shadow:0 0 80px -20px var(--ai-glow)}
+.chat .head{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
+.chat .head b{color:var(--ink)}
+.ai-ico{width:28px;height:28px;border-radius:50%;background:var(--ai);box-shadow:0 0 18px var(--ai-glow);display:grid;place-items:center;color:#0B0B1A;font:800 13px/1 var(--font)}
+.q{justify-self:end;max-width:88%;background:var(--ai);color:#0B0B1A;font-weight:600;padding:14px 18px;border-radius:18px 18px 4px 18px;font-size:16px;line-height:1.45}
+.ans{background:var(--s3);padding:18px;border-radius:18px 18px 18px 4px;font-size:16px;line-height:1.55;min-height:120px}
+.ans ol{margin:8px 0 0;padding-left:22px;display:grid;gap:8px}
+.ans .us{background:var(--sun);color:var(--sun-ink);border-radius:6px;padding:1px 7px;font-weight:700;box-shadow:0 0 20px var(--sun-glow)}
+.caret{display:inline-block;width:8px;height:18px;background:var(--ai);vertical-align:-3px;margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* big statement */
+.statement{font-size:88px;line-height:1;font-weight:800;letter-spacing:-0.04em}
+.cross{position:relative;display:inline-block}
+.slide.go .cross::after{content:"";position:absolute;left:-4%;right:-4%;top:52%;height:6px;background:var(--bad);border-radius:3px;box-shadow:0 0 20px rgba(255,122,107,.7);transform-origin:left;animation:strike .8s var(--ease) .5s both}
+@keyframes strike{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.who{display:grid;gap:12px}
+.who .row{display:flex;align-items:center;gap:14px;background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.who .n{font-family:var(--mono);color:var(--ai);font-size:14px}
+
+/* then/now */
+.flowline{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.flowline span{background:var(--s2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:15px}
+.flowline em{font-style:normal;color:var(--dim);font-family:var(--mono)}
+.flowline.now span{border-color:rgba(139,145,255,.5);box-shadow:0 0 24px -8px var(--ai-glow)}
+.year{font-family:var(--mono);font-size:56px;font-weight:500;letter-spacing:-0.03em}
+
+/* calculator */
+.calc{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:stretch}
+.field{display:grid;gap:8px}
+.field label{display:flex;justify-content:space-between;font-size:15px;color:var(--muted)}
+.field output{font-family:var(--mono);color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--sun);height:28px}
+.loss{font-family:var(--mono);font-size:64px;line-height:1;font-weight:500;letter-spacing:-0.03em;color:var(--sun);text-shadow:0 0 40px var(--sun-glow)}
+
+/* checklist */
+.diag .row{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}
+.diag .x{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(255,122,107,.14);color:var(--bad);font:700 14px/1 var(--mono)}
+
+/* geo flow svg */
+.flow svg{width:100%;height:auto;display:block}
+.flow text{font-family:var(--font);fill:var(--ink);font-size:15px;font-weight:600}
+.flow .sub{fill:var(--muted);font-size:12px;font-weight:500;font-family:var(--mono)}
+
+/* tables */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:20px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:16px}
+th,td{text-align:left;padding:16px 20px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--s1)}
+tr:last-child td{border-bottom:0}
+td.geo{color:var(--ink);background:rgba(139,145,255,.06)}
+
+/* stats */
+.stat{display:grid;gap:6px;align-content:start}
+.stat .from{font-family:var(--mono);font-size:14px;color:var(--dim)}
+.stat .to{font-family:var(--mono);font-size:64px;line-height:1;font-weight:500;letter-spacing:-0.03em;color:var(--ink);text-shadow:0 0 36px var(--ai-glow)}
+.stat .lbl{font-size:15px;color:var(--muted)}
+
+/* charts */
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font-family:var(--mono);font-size:11px;fill:var(--dim)}
+.chart .lab{fill:var(--ink);font-size:13px;font-weight:500}
+.chart .mk{fill:var(--sun);font-size:12px}
+.chart .line{filter:drop-shadow(0 0 6px var(--ai-glow))}
+.slide.go .chart .line{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:draw 2.2s var(--ease) .3s forwards}
+.slide.go .chart .area{animation:fadein 1.4s var(--ease) 1.2s both}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font:500 12px/1.4 var(--mono);padding:6px 10px;border-radius:8px;white-space:nowrap;transform:translate(-50%,-120%);opacity:0;transition:opacity .2s var(--ease)}
+.tip.on{opacity:1}
+.src{font-family:var(--mono);font-size:12px;color:var(--dim)}
+
+/* bars */
+.bars{display:grid;gap:14px}
+.hb{display:grid;grid-template-columns:240px 1fr 80px;gap:16px;align-items:center;font-size:15px}
+.hb .track{height:14px;background:var(--s2);border-radius:4px;overflow:hidden}
+.hb .fill{height:100%;width:var(--w);background:var(--dim);border-radius:0 4px 4px 0;transform-origin:left}
+.slide.go .hb .fill{animation:grow 1.4s var(--ease) both;animation-delay:calc(var(--i,0)*120ms + 200ms)}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.hb.hl .fill{background:var(--sun);box-shadow:0 0 18px var(--sun-glow)}
+.hb.hl .nm{color:var(--sun);font-weight:700}
+.hb .v{text-align:right;font-family:var(--mono)}
+
+/* dot grids */
+.dots{display:flex;flex-wrap:wrap;gap:6px;max-width:320px}
+.dots i{width:16px;height:16px;border-radius:5px;background:var(--s3)}
+.dots i.on{background:var(--ai);box-shadow:0 0 10px var(--ai-glow)}
+.slide.go .dots i.on{animation:light .5s var(--ease) both;animation-delay:calc(var(--k)*45ms + 300ms)}
+@keyframes light{from{background:var(--s3);box-shadow:none}to{background:var(--ai)}}
+.dots.sun i.on{background:var(--sun);box-shadow:0 0 10px var(--sun-glow)}
+.slide.go .dots.sun i.on{animation-name:lightsun}
+@keyframes lightsun{from{background:var(--s3);box-shadow:none}to{background:var(--sun)}}
+.big-r{font-family:var(--mono);font-size:72px;line-height:1;font-weight:500;letter-spacing:-0.04em}
+.big-r small{font-size:28px;color:var(--muted)}
+
+/* ghost visits */
+.ghosts{display:grid;grid-template-columns:repeat(10,1fr);gap:10px;max-width:520px}
+.ghosts i{aspect-ratio:1;border-radius:50%;border:2px dashed var(--dim);max-width:100%}
+.ghosts i.seen{border:0;background:var(--ai);box-shadow:0 0 14px var(--ai-glow)}
+.ghosts i.ghost{border-color:var(--dim)}
+.slide.go .ghosts i.ghost{animation:reveal .6s var(--ease) both;animation-delay:calc(var(--k)*70ms + 900ms)}
+@keyframes reveal{0%{border-style:dashed;background:transparent}100%{border:2px solid var(--sun);background:rgba(255,194,74,.25);box-shadow:0 0 14px var(--sun-glow)}}
+
+/* timeline */
+.tl{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding-top:36px}
+.tl::before{content:"";position:absolute;left:0;right:0;top:10px;height:2px;background:var(--s3)}
+.tl .prog{position:absolute;left:0;top:10px;height:2px;width:100%;background:var(--sun);box-shadow:0 0 12px var(--sun-glow);transform-origin:left}
+.slide.go .tl .prog{animation:grow 2.4s var(--ease) .3s both}
+.tl .pin{position:absolute;top:3px;width:16px;height:16px;border-radius:50%;background:var(--bg);border:2px solid var(--sun);box-shadow:0 0 12px var(--sun-glow)}
+.tl .card ul{margin:0;padding-left:18px;display:grid;gap:6px;color:var(--muted);font-size:14px}
+.tl .when{font-family:var(--mono);font-size:12px;color:var(--sun);letter-spacing:.06em}
+
+/* marquee */
+.marquee{overflow:hidden;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.marquee .track{display:flex;gap:12px;width:max-content;animation:mq 40s linear infinite}
+.marquee.rev .track{animation-direction:reverse;animation-duration:48s}
+.chip{white-space:nowrap;border:1px solid var(--line);background:var(--s1);border-radius:999px;padding:10px 16px;font-size:15px}
+.chip.hot{border-color:rgba(255,194,74,.5);color:var(--sun)}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* prices */
+.prices{display:grid;grid-template-columns:1fr 1.25fr 1fr;gap:18px;align-items:stretch}
+.price{background:var(--s1);border:1px solid var(--line);border-radius:24px;padding:28px;display:grid;gap:14px;align-content:start}
+.price.main{border:2px solid var(--sun);box-shadow:0 0 80px -16px var(--sun-glow);transform:translateY(-8px)}
+.price .amt{white-space:nowrap;font-family:var(--mono);font-size:40px;line-height:1;font-weight:500;letter-spacing:-0.03em}
+.price .amt small{font-size:16px;color:var(--muted)}
+.price ul{margin:0;padding-left:18px;display:grid;gap:7px;font-size:15px;color:var(--muted)}
+.price ul li::marker{color:var(--sun)}
+
+/* shield */
+.shield{width:140px;height:140px;color:var(--sun);filter:drop-shadow(0 0 24px var(--sun-glow))}
+.slide.go .shield path{stroke-dasharray:120;stroke-dashoffset:120;animation:draw 1.6s var(--ease) .3s forwards}
+
+/* objections */
+.obj{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.obj .card q{quotes:"«" "»";font-weight:700;font-size:18px;color:var(--ink)}
+.obj .card p{color:var(--muted);font-size:15px}
+
+/* steps final */
+.next{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.next .num{font-family:var(--mono);font-size:40px;color:var(--sun);text-shadow:0 0 20px var(--sun-glow)}
+
+@media (max-width:900px){
+  h1{font-size:44px} h2{font-size:34px} .statement{font-size:60px}
+  .grid2,.grid3,.calc,.obj,.next{grid-template-columns:1fr}
+  .grid4{grid-template-columns:1fr 1fr}
+  .prices{grid-template-columns:1fr} .price.main{transform:none}
+  .tl{grid-template-columns:1fr 1fr} .tl::before,.tl .prog,.tl .pin{display:none} .tl{padding-top:0}
+  .stat .to{font-size:48px}
+  .hb{grid-template-columns:150px 1fr 64px;font-size:14px}
+  .rail{display:none}
+}
+@media (max-width:560px), (max-height:700px){
+  .deck{scroll-snap-type:y proximity}
+}
+@media (max-width:560px){
+  .slide{padding-block:56px 80px}
+  h1{font-size:36px} h2{font-size:28px} .lead{font-size:17px} .statement{font-size:44px}
+  .grid4,.tl{grid-template-columns:1fr}
+  .stat .to{font-size:40px} .loss{font-size:44px} .big-r{font-size:52px} .year{font-size:40px}
+  .hb{grid-template-columns:100px 1fr 56px;font-size:13px}
+  .card{padding:18px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .deck{scroll-behavior:auto}
+  .slide .chart .line{stroke-dasharray:none!important}
+}
+
+.tabs{display:inline-flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:var(--s1);justify-self:start}
+.tabs button{font:600 14px var(--font);color:var(--muted);background:none;border:0;border-radius:999px;padding:8px 16px;cursor:pointer;min-height:40px}
+.tabs button.on{background:var(--ai);color:#0b0b1a}
+.tabs.sun button.on{background:var(--sun);color:var(--sun-ink)}
+.pc-head{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between}
+.pc-sel{font:500 15px var(--font);color:var(--muted)}.pc-sel b{color:var(--ink);font-size:20px;font-family:var(--mono)}
+.pc svg rect.b{cursor:pointer;transition:opacity .2s}
+.pc svg rect.b.sel{stroke:#fff;stroke-width:1.5}
+.shots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
+.shots.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.shot{margin:0;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--s1)}
+.shot a{display:block}.shot img{display:block;width:100%;height:auto;max-height:58vh;object-fit:contain;background:#0b0b0b}
+.shot figcaption{padding:10px 14px;font-size:14px;line-height:1.4;color:var(--muted)}
+.moves{display:grid;gap:8px}
+.mv{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:10px 14px;align-items:center;padding:12px 16px;border:1px solid var(--line);border-radius:14px;background:var(--s1)}
+.mv .mq{font-size:15px;line-height:1.35}.mv .mq small{display:block;color:var(--dim);font-size:12px;margin-top:2px}
+.mv .was{font-family:var(--mono);color:var(--dim);font-size:15px;white-space:nowrap}
+.mv .ar{color:var(--muted)}
+.mv .now{font-family:var(--mono);font-weight:700;font-size:20px;color:var(--good);white-space:nowrap}
+.mv .now.top{color:var(--sun);text-shadow:0 0 14px var(--sun-glow)}
+.months{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.months .card b{display:block;font:700 36px var(--mono);letter-spacing:-.02em}
+.months .card span{color:var(--muted);font-size:14px}
+@media (max-width:760px){.shots,.shots.two,.months{grid-template-columns:1fr}.shot img{max-height:72vh}
+ .mv{grid-template-columns:minmax(0,1fr) auto auto auto;padding:10px 12px;gap:6px 8px}.mv .mq{font-size:13.5px}.mv .now{font-size:17px}.tabs button{padding:8px 12px}}
+</style>
+
+<div class="bar-top" aria-hidden="true"><i id="prog"></i></div>
+<nav class="rail" id="rail" aria-label="Слайды"></nav>
+<div class="hud"><span class="count" id="count">01 / 18</span><div class="nav"><button id="prev" aria-label="Предыдущий слайд">↑</button><button id="next" aria-label="Следующий слайд">↓</button></div></div>
+
+<main class="deck" id="deck">
+<section class="slide cover" id="s1"><div class="orb ai" style="width:520px;height:520px;left:-160px;top:-120px"></div><div class="orb sun" style="width:380px;height:380px;right:-80px;bottom:-60px"></div><div class="in-w"><div class="meta r" style="--i:0"><span class="dot"></span><span>Кейс «Потока»</span><span>·</span><span>ноябрь 2026</span></div><h1 class="r" style="--i:1">Продукту 2 месяца. <span class="sun-t">Нейросети уже советуют его.</span></h1><p class="lead r" style="--i:2">«Поток» — голосовой ввод для компьютера и Telegram-бот для расшифровки. Рост без рекламы: из поиска и ответов нейросетей.</p><div class="hint r" style="--i:3"><kbd>↓</kbd><kbd>Пробел</kbd> листать</div></div></section>
+<section class="slide" id="s2"><div class="orb ai" style="width:600px;height:600px;right:-200px;top:-100px"></div><div class="in-w"><div class="eyebrow r" style="--i:0">Что сделали</div><h2 class="r" style="--i:1">Выложили страницы-ответы на вопросы людей и каждый день меряем результат</h2><div class="grid2"><div class="card r" style="--i:2"><h3>«Поток», potok.now</h3><p class="muted">Сайт считает трафик из нейросетей с 25 августа. Бот запущен 24 сентября. В конце сентября выложили страницы по своей методике.</p></div><div class="card r" style="--i:3"><h3>Откуда цифры</h3><p class="muted">Яндекс Вебмастер, Яндекс Метрика, счётчик сайта, журнал сервера и база бота. Срез — 12 ноября.</p></div></div></div></section>
+<section class="slide" id="s3"><div class="in-w"><div class="eyebrow r" style="--i:0">Два месяца с нуля</div><h2 class="r" style="--i:1">Что изменилось у «Потока»</h2><div class="grid4"><div class="stat card glow r" style="--i:2"><span class="from">было 3</span><span class="to mono" data-count="2121">2 121</span><span class="lbl">человек запустили бота</span></div><div class="stat card r" style="--i:3"><span class="from">было 0</span><span class="to mono" data-count="245">245</span><span class="lbl">визитов на сайт из нейросетей</span></div><div class="stat card r" style="--i:4"><span class="from">было 5</span><span class="to mono" data-count="1464">1 464</span><span class="lbl">страниц в индексе Яндекса</span></div><div class="stat card r" style="--i:5"><span class="from">было ~80 в день</span><span class="to mono" data-count="1569">1 569</span><span class="lbl">показов в Яндексе в день  в среднем</span></div></div><p class="src r" style="--i:6">Бот: 24.09 → 12.11. Нейросети: 13.09 → 12.11. Индекс: Вебмастер, 27.08 → 07.10. Показы: среднее до 22.09 и за 24.09–08.10.</p></div></section>
+<section class="slide" id="s4"><div class="in-w"><div class="eyebrow sun r" style="--i:0">Что отвечают нейросети</div><h2 class="r" style="--i:1">Спрашивают про голосовой ввод — получают «Поток»</h2><div class="shots r" style="--i:2"><figure class="shot"><a href="img/alice.webp" target="_blank" rel="noopener"><img src="img/alice.webp" alt="Ответ Алисы AI с «Потоком» на первом месте" loading="lazy"></a><figcaption>Алиса AI: «Поток» первым в списке лучших программ голосового ввода на русском</figcaption></figure><figure class="shot"><a href="img/chatgpt-windows.webp" target="_blank" rel="noopener"><img src="img/chatgpt-windows.webp" alt="Ответ ChatGPT с рекомендацией «Потока» для Windows" loading="lazy"></a><figcaption>ChatGPT советует «Поток» для голосового ввода в Windows</figcaption></figure><figure class="shot"><a href="img/chatgpt-bot.webp" target="_blank" rel="noopener"><img src="img/chatgpt-bot.webp" alt="Ответ ChatGPT в телефоне с ботом @potok_now_bot" loading="lazy"></a><figcaption>ChatGPT в телефоне советует бота @potok_now_bot</figcaption></figure></div><p class="src r" style="--i:3">Нажмите на скриншот, чтобы открыть крупно. Реальные ответы; нейросети отвечают по-разному от раза к разу.</p></div></section>
+<section class="slide" id="s5"><div class="orb sun" style="width:420px;height:420px;right:-140px;top:-120px"></div><div class="in-w"><div class="eyebrow sun r" style="--i:0">Бот «Поток» · новые люди</div><h2 class="r" style="--i:1">С 24 сентября по 12 ноября: от 3 до <span class="sun-t">2 121</span> человека</h2><div class="card pc r" style="--i:2" id="pc-bot"><div class="pc-head"><div class="tabs sun" role="tablist"><button data-m="day" class="on">По дням</button><button data-m="week">По неделям</button><button data-m="month">По месяцам</button></div><div class="pc-sel" aria-live="polite"></div></div><div class="chart"></div><span class="src">Первый /start каждого аккаунта, все каналы. 12 ноября — неполный день. Нажмите на столбец, чтобы увидеть число.</span></div></div></section>
+<section class="slide" id="s6"><div class="in-w"><div class="eyebrow sun r" style="--i:0">Бот «Поток» · приток</div><h2 class="r" style="--i:1">Сейчас около 100 новых человек каждый день</h2><div class="grid3"><div class="card r" style="--i:2"><div class="big-r">~104</div><p class="muted small">новых в день, 5–11 ноября</p></div><div class="card r" style="--i:3"><div class="big-r">729</div><p class="muted small">новых за неделю, 5–11 ноября</p></div><div class="card glow r" style="--i:4"><div class="big-r">1 837</div><p class="muted small">новых за 30 дней, 13.10–11.11</p></div></div><div class="months r" style="--i:5"><div class="card"><b>40</b><span>сентябрь · бот работал 7 дней (с 24.09)</span></div><div class="card"><b>1 035</b><span>октябрь целиком</span></div><div class="card"><b class="sun-t">1 007</b><span>1–11 ноября · почти весь октябрь за 11 дней</span></div></div></div></section>
+<section class="slide" id="s7"><div class="in-w"><div class="eyebrow r" style="--i:0">Деньги</div><h2 class="r" style="--i:1">Люди платят — и в боте, и в приложении</h2><div class="shots two r" style="--i:2"><figure class="shot"><a href="img/payments.webp" target="_blank" rel="noopener"><img src="img/payments.webp" alt="Уведомления об оплатах подписок «Потока»" loading="lazy"></a><figcaption>Уведомления об оплатах в служебном канале. Личные данные покупателей скрыты.</figcaption></figure><div class="grid2" style="grid-template-columns:1fr;align-content:start"><div class="card"><span class="from muted">Бот</span><div class="big-r">449 ₽</div><p class="muted small">подписка на 30 дней</p></div><div class="card"><span class="from muted">Приложение</span><div class="big-r">690 ₽</div><p class="muted small">подписка на месяц</p></div></div></div></div></section>
+<section class="slide" id="s8"><div class="orb ai" style="width:420px;height:420px;left:-120px;bottom:-120px"></div><div class="in-w"><div class="eyebrow r" style="--i:0">Люди из нейросетей</div><h2 class="r" style="--i:1">С нуля до 245 визитов. 225 из них — из ChatGPT</h2><div class="card pc r" style="--i:2" id="pc-ai"><div class="pc-head"><div class="tabs" role="tablist"><button data-m="day" class="on">По дням</button><button data-m="week">По неделям</button><button data-m="month">По месяцам</button></div><div class="pc-sel" aria-live="polite"></div></div><div class="chart"></div><span class="src">Визиты из ChatGPT, Алисы, Perplexity и Gemini, счётчик сайта, 13.09–12.11. Из ChatGPT — 165 разных людей.</span></div></div></section>
+<section class="slide" id="s9"><div class="in-w"><div class="eyebrow r" style="--i:0">После перехода</div><h2 class="r" style="--i:1">Из нейросетей приходят и сразу действуют</h2><div class="grid3"><div class="stat card r" style="--i:2"><span class="from">из ИИ-визитов</span><span class="to mono" data-count="55">55</span><span class="lbl">нажатий «Скачать»</span></div><div class="stat card r" style="--i:3"><span class="from">первый источник — ИИ</span><span class="to mono" data-count="15">15</span><span class="lbl">регистраций в приложении</span></div><div class="stat card r" style="--i:4"><span class="from">первый источник — ИИ</span><span class="to mono" data-count="15">15</span><span class="lbl">пробных периодов</span></div></div><p class="src r" style="--i:5">25.08–12.11. Это разные счётчики, а не одна воронка.</p></div></section>
+<section class="slide" id="s10"><div class="in-w"><div class="eyebrow r" style="--i:0">Показы в поиске</div><h2 class="r" style="--i:1">После выкладки показы выросли в 20 раз за два дня</h2><div class="card r" style="--i:2"><div class="chart" id="c-shows"></div><span class="src">Показы в Яндексе по дням, Яндекс Вебмастер, 25.08–08.10.2026. Наведите или нажмите на график.</span></div></div></section>
+<section class="slide" id="s11"><div class="in-w"><div class="eyebrow r" style="--i:0">Индекс</div><h2 class="r" style="--i:1">За 10 дней Яндекс взял в поиск 1 400 новых страниц</h2><div class="card r" style="--i:2"><div class="chart" id="c-idx"></div><span class="src">Страниц в поиске Яндекса, Яндекс Вебмастер, 27.08–07.10.2026</span></div></div></section>
+<section class="slide" id="s12"><div class="in-w"><div class="eyebrow r" style="--i:0">Переходы из поиска</div><h2 class="r" style="--i:1">1 430 человек пришли из Яндекса и Google</h2><div class="card pc r" style="--i:2" id="pc-search"><div class="pc-head"><div class="tabs" role="tablist"><button data-m="day" class="on">По дням</button><button data-m="week">По неделям</button><button data-m="month">По месяцам</button></div><div class="pc-sel" aria-live="polite"></div></div><div class="chart"></div><span class="src">Яндекс Метрика, 21.09–12.11: Яндекс 1 199, Google 218, другие 13.</span></div></div></section>
+<section class="slide" id="s13"><div class="orb sun" style="width:380px;height:380px;right:-60px;top:30%"></div><div class="in-w"><div class="eyebrow r" style="--i:0">Нейросети читают нас каждый день</div><h2 class="r" style="--i:1">711 раз ChatGPT пришёл на наш сайт за ответом для живого человека</h2><div class="card r" style="--i:2"><div class="bars" id="bots"></div><span class="src">Обращения роботов нейросетей к potok.now, журнал сервера, 21.09–29.10.2026</span></div></div></section>
+<section class="slide" id="s14"><div class="in-w"><div class="eyebrow sun r" style="--i:0">Было → стало</div><h2 class="r" style="--i:1">Где нас не было — и где мы теперь</h2><div class="moves"><div class="mv r" style="--i:2"><div class="mq">Алиса: «лучшая программа голосового ввода на русском»<small>ответ Алисы</small></div><span class="was">только ссылка</span><span class="ar">→</span><span class="now top">№1 в тексте</span></div><div class="mv r" style="--i:3"><div class="mq">ChatGPT: называет «Поток» на тех же 14 вопросах<small>18.10 → 02.11</small></div><span class="was">2 из 14</span><span class="ar">→</span><span class="now">3 из 14</span></div><div class="mv r" style="--i:4"><div class="mq">Поиск Telegram: наш бот первый<small>число запросов</small></div><span class="was">26</span><span class="ar">→</span><span class="now">48</span></div><div class="mv r" style="--i:5"><div class="mq">Яндекс: «как открыть панель инструментов диктовки в windows»<small>место в выдаче</small></div><span class="was">нет в топ-10</span><span class="ar">→</span><span class="now">№4</span></div><div class="mv r" style="--i:6"><div class="mq">Яндекс: «voisty отзывы»<small>место в выдаче</small></div><span class="was">№2</span><span class="ar">→</span><span class="now top">№1</span></div><div class="mv r" style="--i:7"><div class="mq">Яндекс: «доступен ли wispr flow в россии»<small>место в выдаче</small></div><span class="was">№3</span><span class="ar">→</span><span class="now top">№2</span></div><div class="mv r" style="--i:8"><div class="mq">Яндекс: «win h не работает»<small>место в выдаче</small></div><span class="was">№3</span><span class="ar">→</span><span class="now top">№2</span></div><div class="mv r" style="--i:9"><div class="mq">Яндекс: «распознавание речи виндовс 10 на русском»<small>место в выдаче</small></div><span class="was">№7</span><span class="ar">→</span><span class="now">№5</span></div></div><p class="src r" style="--i:12">Замеры 23.09, 18.10 и 02.11 без входа в аккаунты, один прогон на запрос; Алиса — скриншот ноября; Telegram — 29.09 → 17.10.</p></div></section>
+<section class="slide" id="s15"><div class="in-w"><div class="eyebrow r" style="--i:0">Где нас называют</div><h2 class="r" style="--i:1">По целевым вопросам мы на первой странице</h2><div class="grid3"><div class="card r" style="--i:2"><div class="big-r">22<small> из 25</small></div><div class="dots" data-on="22" data-all="25"></div><p class="muted small">вопросов: наша страница в топ-10 Яндекса</p></div><div class="card r" style="--i:3"><div class="big-r">16<small> из 19</small></div><div class="dots" data-on="16" data-all="19"></div><p class="muted small">ответов Алисы называют «Поток»</p></div><div class="card r" style="--i:4"><div class="big-r">14<small> из 18</small></div><div class="dots sun" data-on="14" data-all="18"></div><p class="muted small">вопросов про приложение: топ-10 Яндекса, 02.11</p></div></div><p class="src r" style="--i:5">Замеры 18.10 и 02.11.2026: каждый вопрос задан в каждой системе, ответы сохранены.</p></div></section>
+<section class="slide" id="s16"><div class="in-w"><div class="eyebrow sun r" style="--i:0">Мы видим то, что теряет обычная аналитика</div><h2 class="r" style="--i:1">Из 29 визитов из ChatGPT обычная аналитика узнала бы только 5</h2><div class="grid2" style="align-items:center"><div class="ghosts r" style="--i:2" id="ghosts"></div><div class="card r" style="--i:3"><p>Мобильный ChatGPT не сообщает сайту, откуда пришёл человек. Метрика записывает такой визит как «прямой заход».</p><p class="muted">Мы метим переходы и запоминаем первый источник, поэтому видим людей из нейросетей, а не гадаем.</p></div></div><p class="src r" style="--i:4">Счётчик сайта, данные на 29.10.2026.</p></div></section>
+<section class="slide placement-network" id="placements">
+  <div class="orb ai" style="width:420px;height:420px;right:-140px;top:-120px"></div>
+  <div class="in-w">
+    <div class="eyebrow sun r" style="--i:0">Площадки для размещения</div>
+    <h2 class="r" style="--i:1">Есть где разместить<br>ссылки и страницы</h2>
+    <div class="grid2">
+      <div class="card glow r" style="--i:2">
+        <span class="mono ai-t" style="font-size:clamp(48px,7vw,80px);line-height:1.05;font-weight:500">47</span>
+        <h3>сайтов с трафиком</h3>
+        <p class="muted">Можно размещать ссылки и отдельные страницы.</p>
+      </div>
+      <div class="card sun r" style="--i:3">
+        <span class="mono sun-t" style="font-size:clamp(48px,7vw,80px);line-height:1.05;font-weight:500">270</span>
+        <h3>партнёрских страниц</h3>
+        <p class="muted">Дополнительные возможности размещения страниц и материалов.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" id="s17"><div class="orb sun" style="width:600px;height:600px;left:calc(50% - 300px);top:calc(50% - 300px)"></div><div class="orb ai" style="width:360px;height:360px;left:-100px;top:-100px"></div><div class="in-w"><div class="eyebrow sun r" style="--i:0">Итог за два месяца</div><h2 class="r" style="--i:1">Ноль рекламы. <span class="sun-t">Нейросети и поиск приводят людей каждый день.</span></h2><div class="next"><div class="card r" style="--i:2"><span class="num">2 121</span><p>человек в боте, ~100 новых в день</p></div><div class="card r" style="--i:3"><span class="num">245</span><p>визитов из нейросетей, 225 из ChatGPT</p></div><div class="card sun r" style="--i:4"><span class="num">№1</span><p>в ответах Алисы и ChatGPT на скриншотах ноября</p></div></div><p class="src r" style="--i:5">Данные: Яндекс Вебмастер, Яндекс Метрика, счётчик и журнал сервера potok.now, база бота; 25.08–12.11.2026.</p></div></section>
+</main>
+<script>
+(function(){
+  var deck=document.getElementById('deck');
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var N=slides.length,cur=0;
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function pad(n){return (n<10?'0':'')+n}
+  function fmt(n){return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
+  var rail=document.getElementById('rail');
+  slides.forEach(function(s,i){var a=document.createElement('a');a.href='#'+s.id;a.setAttribute('aria-label','Слайд '+(i+1));a.addEventListener('click',function(e){e.preventDefault();go(i)});rail.appendChild(a)});
+  var dotsR=[].slice.call(rail.children);
+  function go(i){i=Math.max(0,Math.min(N-1,i));slides[i].scrollIntoView({behavior:reduce?'auto':'smooth'})}
+  document.getElementById('prev').addEventListener('click',function(){go(cur-1)});
+  document.getElementById('next').addEventListener('click',function(){go(cur+1)});
+  document.addEventListener('keydown',function(e){
+    if(e.target.tagName==='INPUT'||e.target.tagName==='BUTTON'&&e.key===' ')return;
+    if(['ArrowDown','PageDown',' ','ArrowRight'].indexOf(e.key)>-1){e.preventDefault();go(cur+1)}
+    else if(['ArrowUp','PageUp','ArrowLeft'].indexOf(e.key)>-1){e.preventDefault();go(cur-1)}
+    else if(e.key==='Home'){e.preventDefault();go(0)} else if(e.key==='End'){e.preventDefault();go(N-1)}});
+  var io=new IntersectionObserver(function(es){es.forEach(function(en){
+    if(!en.isIntersecting)return;var s=en.target,i=slides.indexOf(s);cur=i;
+    document.getElementById('count').textContent=pad(i+1)+' / '+N;
+    document.getElementById('prog').style.width=((i+1)/N*100)+'%';
+    dotsR.forEach(function(d,k){d.classList.toggle('on',k===i)});
+    if(!reduce&&!s.classList.contains('go')){s.classList.add('go');s.querySelectorAll('[data-count]').forEach(countUp)}
+  })},{root:deck,threshold:0.4});
+  slides.forEach(function(s){io.observe(s)});
+  if(location.hash){var t=document.getElementById(location.hash.slice(1));if(t)setTimeout(function(){t.scrollIntoView()},50)}
+  function countUp(el){var to=+el.dataset.count,t0=null,dur=1600;
+    function f(t){if(!t0)t0=t;var p=Math.min(1,(t-t0)/dur);var e=1-Math.pow(1-p,4);el.textContent=fmt(to*e);if(p<1)requestAnimationFrame(f)}
+    requestAnimationFrame(f)}
+
+  var SHOWS=[["2026-08-25",116,9],["2026-08-26",219,17],["2026-08-27",140,14],["2026-08-28",69,7],["2026-08-29",59,7],["2026-08-30",70,5],["2026-08-31",111,7],["2026-09-01",75,4],["2026-09-02",96,8],["2026-09-03",94,6],["2026-09-04",93,5],["2026-09-05",68,0],["2026-09-06",52,2],["2026-09-07",89,2],["2026-09-08",70,1],["2026-09-09",73,0],["2026-09-10",74,1],["2026-09-11",70,3],["2026-09-12",47,3],["2026-09-13",40,1],["2026-09-14",61,2],["2026-09-15",61,3],["2026-09-16",54,2],["2026-09-17",61,4],["2026-09-18",64,3],["2026-09-19",52,5],["2026-09-20",67,1],["2026-09-21",87,3],["2026-09-22",181,5],["2026-09-23",792,23],["2026-09-24",2113,37],["2026-09-25",1757,33],["2026-09-26",1817,32],["2026-09-27",1513,44],["2026-09-28",1462,34],["2026-09-29",1809,39],["2026-09-30",1830,30],["2026-10-01",1351,38],["2026-10-02",1321,43],["2026-10-03",1342,31],["2026-10-04",1461,40],["2026-10-05",1664,47],["2026-10-06",1175,26],["2026-10-07",1538,48],["2026-10-08",1379,31]],IDX=[["2026-08-27",5],["2026-08-28",5],["2026-08-31",38],["2026-09-02",38],["2026-09-06",40],["2026-09-07",41],["2026-09-09",42],["2026-09-10",42],["2026-09-15",42],["2026-09-19",42],["2026-09-20",42],["2026-09-23",40],["2026-09-24",40],["2026-09-26",85],["2026-09-28",161],["2026-09-30",616],["2026-10-02",709],["2026-10-05",1121],["2026-10-07",1464]],BOTS=[["GPTBot (OpenAI)",18816],["ClaudeBot (Anthropic)",12874],["PerplexityBot",5344],["Поиск ChatGPT",2042],["ChatGPT за человека",711,true]],BOT=[["2026-09-24", 3, false], ["2026-09-26", 4, false], ["2026-09-27", 2, false], ["2026-09-28", 10, false], ["2026-09-29", 10, false], ["2026-09-30", 11, false], ["2026-10-01", 11, false], ["2026-10-02", 8, false], ["2026-10-03", 12, false], ["2026-10-04", 15, false], ["2026-10-05", 17, false], ["2026-10-06", 8, false], ["2026-10-07", 13, false], ["2026-10-08", 17, false], ["2026-10-09", 24, false], ["2026-10-10", 29, false], ["2026-10-11", 25, false], ["2026-10-12", 26, false], ["2026-10-13", 43, false], ["2026-10-14", 24, false], ["2026-10-15", 43, false], ["2026-10-16", 33, false], ["2026-10-17", 23, false], ["2026-10-18", 38, false], ["2026-10-19", 61, false], ["2026-10-20", 39, false], ["2026-10-21", 41, false], ["2026-10-22", 55, false], ["2026-10-23", 49, false], ["2026-10-24", 34, false], ["2026-10-25", 42, false], ["2026-10-26", 53, false], ["2026-10-27", 55, false], ["2026-10-28", 52, false], ["2026-10-29", 56, false], ["2026-10-30", 50, false], ["2026-10-31", 39, false], ["2026-11-01", 54, false], ["2026-11-02", 61, false], ["2026-11-03", 80, false], ["2026-11-04", 83, false], ["2026-11-05", 108, false], ["2026-11-06", 107, false], ["2026-11-07", 114, false], ["2026-11-08", 83, false], ["2026-11-09", 105, false], ["2026-11-10", 108, false], ["2026-11-11", 104, false], ["2026-11-12", 39, true]],AI=[["2026-09-13", 0, false], ["2026-09-14", 2, false], ["2026-09-15", 0, false], ["2026-09-16", 0, false], ["2026-09-17", 0, false], ["2026-09-18", 0, false], ["2026-09-19", 0, false], ["2026-09-20", 0, false], ["2026-09-21", 0, false], ["2026-09-22", 0, false], ["2026-09-23", 1, false], ["2026-09-24", 0, false], ["2026-09-25", 0, false], ["2026-09-26", 1, false], ["2026-09-27", 1, false], ["2026-09-28", 0, false], ["2026-09-29", 0, false], ["2026-09-30", 2, false], ["2026-10-01", 0, false], ["2026-10-02", 4, false], ["2026-10-03", 1, false], ["2026-10-04", 4, false], ["2026-10-05", 0, false], ["2026-10-06", 0, false], ["2026-10-07", 11, false], ["2026-10-08", 2, false], ["2026-10-09", 2, false], ["2026-10-10", 0, false], ["2026-10-11", 1, false], ["2026-10-12", 0, false], ["2026-10-13", 1, false], ["2026-10-14", 1, false], ["2026-10-15", 1, false], ["2026-10-16", 2, false], ["2026-10-17", 1, false], ["2026-10-18", 7, false], ["2026-10-19", 8, false], ["2026-10-20", 6, false], ["2026-10-21", 8, false], ["2026-10-22", 10, false], ["2026-10-23", 5, false], ["2026-10-24", 3, false], ["2026-10-25", 3, false], ["2026-10-26", 2, false], ["2026-10-27", 4, false], ["2026-10-28", 5, false], ["2026-10-29", 10, false], ["2026-10-30", 14, false], ["2026-10-31", 8, false], ["2026-11-01", 2, false], ["2026-11-02", 3, false], ["2026-11-03", 8, false], ["2026-11-04", 14, false], ["2026-11-05", 12, false], ["2026-11-06", 23, false], ["2026-11-07", 5, false], ["2026-11-08", 10, false], ["2026-11-09", 16, false], ["2026-11-10", 9, false], ["2026-11-11", 11, false], ["2026-11-12", 1, true]],SITE=[["2026-09-21", 0, false], ["2026-09-22", 3, false], ["2026-09-23", 17, false], ["2026-09-24", 24, false], ["2026-09-25", 26, false], ["2026-09-26", 24, false], ["2026-09-27", 22, false], ["2026-09-28", 18, false], ["2026-09-29", 28, false], ["2026-09-30", 25, false], ["2026-10-01", 28, false], ["2026-10-02", 22, false], ["2026-10-03", 25, false], ["2026-10-04", 21, false], ["2026-10-05", 30, false], ["2026-10-06", 21, false], ["2026-10-07", 30, false], ["2026-10-08", 29, false], ["2026-10-09", 21, false], ["2026-10-10", 21, false], ["2026-10-11", 30, false], ["2026-10-12", 33, false], ["2026-10-13", 34, false], ["2026-10-14", 26, false], ["2026-10-15", 21, false], ["2026-10-16", 18, false], ["2026-10-17", 11, false], ["2026-10-18", 23, false], ["2026-10-19", 29, false], ["2026-10-20", 16, false], ["2026-10-21", 36, false], ["2026-10-22", 29, false], ["2026-10-23", 33, false], ["2026-10-24", 32, false], ["2026-10-25", 34, false], ["2026-10-26", 26, false], ["2026-10-27", 38, false], ["2026-10-28", 27, false], ["2026-10-29", 40, false], ["2026-10-30", 34, false], ["2026-10-31", 38, false], ["2026-11-01", 30, false], ["2026-11-02", 36, false], ["2026-11-03", 39, false], ["2026-11-04", 33, false], ["2026-11-05", 31, false], ["2026-11-06", 38, false], ["2026-11-07", 40, false], ["2026-11-08", 34, false], ["2026-11-09", 38, false], ["2026-11-10", 31, false], ["2026-11-11", 25, false], ["2026-11-12", 12, true]];
+  var MONTHS=['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];
+  var MONTHS_N=['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
+  function dlabel(s){var p=s.split('-');return (+p[2])+' '+MONTHS[+p[1]-1]}
+  var NS='http://www.w3.org/2000/svg';
+  function el(n,a,parent){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(parent)parent.appendChild(e);return e}
+  function T(s){return new Date(s+'T00:00:00').getTime()}
+
+  function timeChart(host,pts,o){
+    var W=760,H=300,m={l:52,r:44,t:28,b:30};
+    var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':o.aria});host.appendChild(svg);
+    var t0=pts[0].t,t1=pts[pts.length-1].t,vmax=o.ymax;
+    function x(t){return m.l+(t-t0)/(t1-t0)*(W-m.l-m.r)}
+    function y(v){return H-m.b-v/vmax*(H-m.t-m.b)}
+    o.ticks.forEach(function(v){el('line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:'#272727','stroke-width':1},svg);var tx=el('text',{x:m.l-10,y:y(v)+4,'text-anchor':'end'},svg);tx.textContent=fmt(v)});
+    o.xticks.forEach(function(s){var tx=el('text',{x:x(T(s)),y:H-8,'text-anchor':'middle'},svg);tx.textContent=dlabel(s)});
+    if(o.marker){var mx=x(T(o.marker[0]));el('line',{x1:mx,x2:mx,y1:m.t-8,y2:H-m.b,stroke:'#FFC24A','stroke-width':1.5,'stroke-dasharray':'4 5'},svg);
+      var ml=el('text',{x:mx-8,y:m.t+2,'text-anchor':'end',class:'mk'},svg);ml.textContent=o.marker[1]}
+    var d='';pts.forEach(function(p,i){var X=x(p.t),Y=y(p.v);if(i===0)d+='M'+X+' '+Y;else if(o.step)d+='H'+X+'V'+Y;else d+='L'+X+' '+Y});
+    el('path',{d:d+'V'+y(0)+'H'+x(t0)+'Z',fill:'#8B91FF','fill-opacity':0.16,stroke:'none',class:'area'},svg);
+    var line=el('path',{d:d,fill:'none',stroke:'#8B91FF','stroke-width':2.5,'stroke-linejoin':'round',class:'line'},svg);
+    var len=Math.ceil(line.getTotalLength?line.getTotalLength():3000);line.style.setProperty('--len',len);
+    var last=pts[pts.length-1];
+    el('circle',{cx:x(last.t),cy:y(last.v),r:6,fill:'#FFC24A',stroke:'#000','stroke-width':2,style:'filter:drop-shadow(0 0 8px #FFC24A)'},svg);
+    var ll=el('text',{x:x(last.t)-12,y:y(last.v)-14,'text-anchor':'end',class:'lab'},svg);ll.textContent=fmt(last.v);
+    var tip=document.createElement('div');tip.className='tip';host.appendChild(tip);
+    var vl=el('line',{y1:m.t,y2:H-m.b,stroke:'#A1A5AE','stroke-width':1,opacity:0},svg);
+    var dt=el('circle',{r:5,fill:'#8B91FF',stroke:'#000','stroke-width':2,opacity:0},svg);
+    var hit=el('rect',{x:m.l,y:0,width:W-m.l-m.r,height:H,fill:'transparent'},svg);
+    hit.addEventListener('pointermove',function(ev){var r=svg.getBoundingClientRect(),sx=(ev.clientX-r.left)/r.width*W,b=pts[0],bd=1e18;
+      pts.forEach(function(p){var dd=Math.abs(x(p.t)-sx);if(dd<bd){bd=dd;b=p}});var X=x(b.t),Y=y(b.v);
+      vl.setAttribute('x1',X);vl.setAttribute('x2',X);vl.setAttribute('opacity',.5);dt.setAttribute('cx',X);dt.setAttribute('cy',Y);dt.setAttribute('opacity',1);
+      tip.textContent=b.label;tip.style.left=(X/W*r.width)+'px';tip.style.top=(Y/H*r.height)+'px';tip.classList.add('on')});
+    hit.addEventListener('pointerleave',function(){vl.setAttribute('opacity',0);dt.setAttribute('opacity',0);tip.classList.remove('on')});
+  }
+  timeChart(document.getElementById('c-shows'),SHOWS.map(function(r){return{t:T(r[0]),v:r[1],label:dlabel(r[0])+': '+fmt(r[1])+' показов, '+r[2]+' кликов'}}),
+    {aria:'Показы в Яндексе: около 80 в день до 22 сентября, затем 1200–2100',ymax:2400,ticks:[0,600,1200,1800,2400],xticks:['2026-08-25','2026-09-08','2026-09-22','2026-10-08'],marker:['2026-09-23','выкладка страниц']});
+  timeChart(document.getElementById('c-idx'),IDX.map(function(r){return{t:T(r[0]),v:r[1],label:dlabel(r[0])+': '+fmt(r[1])+' стр.'}}),
+    {aria:'Страниц в индексе Яндекса: 5 в конце августа, 1464 7 октября',ymax:1600,ticks:[0,400,800,1200,1600],xticks:['2026-08-27','2026-09-17','2026-10-07'],step:true,marker:['2026-09-23','выкладка']});
+
+  // interactive period charts: day / week / month
+  function monday(s){var d=new Date(s+'T12:00:00');var k=(d.getDay()+6)%7;d.setDate(d.getDate()-k);return d.toISOString().slice(0,10)}
+  function group(rows,mode){
+    if(mode==='day')return rows.map(function(r){return{key:r[0],v:r[1],partial:!!r[2],label:dlabel(r[0])+(r[2]?' (день не окончен)':'')}});
+    var out=[],idx={};
+    rows.forEach(function(r){var k=mode==='week'?monday(r[0]):r[0].slice(0,7);
+      if(!(k in idx)){idx[k]=out.length;out.push({key:k,v:0,partial:false,first:r[0],last:r[0]})}
+      var o=out[idx[k]];o.v+=r[1];o.last=r[0];if(r[2])o.partial=true});
+    out.forEach(function(o){if(mode==='week'){o.label=dlabel(o.first)+' – '+dlabel(o.last)}else{var p=o.key.split('-');o.label=MONTHS_N[+p[1]-1]+(o.first.slice(8)!=='01'?' (с '+dlabel(o.first)+')':'')}
+      var span=(T(o.last)-T(o.first))/864e5+1;if(o.partial||(mode==='week'&&span<7))o.label+=' · неполн.'});
+    return out}
+  function periodChart(id,rows,o){
+    var box=document.getElementById(id),host=box.querySelector('.chart'),sel=box.querySelector('.pc-sel'),btns=[].slice.call(box.querySelectorAll('.tabs button'));
+    var color=o.sun?'#FFC24A':'#8B91FF',mode='day',total=rows.reduce(function(a,r){return a+r[1]},0);
+    function render(){
+      host.innerHTML='';var pts=group(rows,mode);
+      var W=760,H=300,m={l:48,r:16,t:30,b:30},n=pts.length,bw=(W-m.l-m.r)/n;
+      var max=Math.max.apply(null,pts.map(function(p){return p.v}))||1,q=max/4,mag=Math.pow(10,Math.floor(Math.log10(q))),nice=[1,2,2.5,5,10].filter(function(n){return n*mag>=q})[0]*mag,vmax=Math.max(4,nice*4);
+      var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':o.aria},host);
+      function y(v){return H-m.b-v/vmax*(H-m.t-m.b)}
+      for(var i=0;i<=4;i++){var v=vmax*i/4;el('line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),stroke:'#272727'},svg);var tx=el('text',{x:m.l-8,y:y(v)+4,'text-anchor':'end'},svg);tx.textContent=fmt(v)}
+      var lab=[0,Math.floor((n-1)/2),n-1];if(mode!=='day')lab=pts.map(function(_,k){return k});
+      var bars=[];
+      pts.forEach(function(p,k){var X=m.l+k*bw,w=Math.max(2,bw*(mode==='day'?.72:.62)),bx=X+(bw-w)/2;
+        var rc=el('rect',{x:bx,y:y(p.v),width:w,height:Math.max(1,y(0)-y(p.v)),rx:Math.min(6,w/3),fill:color,opacity:p.partial?.45:1,class:'b',tabindex:0},svg);
+        if(mode!=='day'&&n<=12){var vt=el('text',{x:bx+w/2,y:y(p.v)-8,'text-anchor':'middle',class:'lab'},svg);vt.textContent=fmt(p.v)}
+        if(lab.indexOf(k)>-1&&(mode==='day'||n<=9)){var tx=el('text',{x:bx+w/2,y:H-8,'text-anchor':lab.length===3&&k===0?'start':lab.length===3&&k===n-1?'end':'middle'},svg);
+          tx.textContent=mode==='month'?p.label.split(' ')[0]:mode==='week'?dlabel(p.first):dlabel(p.key)}
+        function pick(){bars.forEach(function(b){b.classList.remove('sel')});rc.classList.add('sel');sel.innerHTML=p.label+': <b>'+fmt(p.v)+'</b> '+o.unit}
+        rc.addEventListener('pointerenter',pick);rc.addEventListener('click',pick);rc.addEventListener('focus',pick);bars.push(rc)});
+      var hit=pts.length-1;while(hit>0&&pts[hit].partial)hit--;
+      var p=pts[hit];bars[hit].classList.add('sel');sel.innerHTML=p.label+': <b>'+fmt(p.v)+'</b> '+o.unit;
+    }
+    btns.forEach(function(b){b.addEventListener('click',function(){mode=b.dataset.m;btns.forEach(function(x){x.classList.toggle('on',x===b)});render()})});
+    render();var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(render,200)});
+  }
+  periodChart('pc-bot',BOT,{sun:true,unit:'новых',aria:'Новые пользователи бота по дням, неделям и месяцам'});
+  periodChart('pc-ai',AI,{unit:'визитов',aria:'Визиты из нейросетей по дням, неделям и месяцам'});
+  periodChart('pc-search',SITE,{unit:'переходов',aria:'Переходы из поиска по дням, неделям и месяцам'});
+
+  var bh=document.getElementById('bots'),bmax=BOTS[0][1];
+  BOTS.forEach(function(b,i){var row=document.createElement('div');row.className='hb'+(b[2]?' hl':'');row.style.setProperty('--i',i);
+    row.innerHTML='<span class="nm"></span><div class="track"><div class="fill"></div></div><span class="v"></span>';
+    row.querySelector('.nm').textContent=b[0];row.querySelector('.fill').style.setProperty('--w',Math.max(2,b[1]/bmax*100)+'%');
+    row.querySelector('.v').textContent=fmt(b[1]);row.title=b[0]+': '+fmt(b[1])+' обращений';bh.appendChild(row)});
+  document.querySelectorAll('.dots').forEach(function(d){var on=+d.dataset.on,all=+d.dataset.all,from=+(d.dataset.from||0);
+    for(var i=0;i<all;i++){var s=document.createElement('i');if(i<on){s.className='on';s.style.setProperty('--k',Math.max(0,i-from))}d.appendChild(s)}});
+  var g=document.getElementById('ghosts');
+  for(var i=0;i<29;i++){var s=document.createElement('i');if(i<5)s.className='seen';else{s.className='ghost';s.style.setProperty('--k',i-5)}g.appendChild(s)}
+})();
+</script>
