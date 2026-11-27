@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Точка Счастья. Дети: что сделано (в %), что осталось и примеры страниц</title>
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    
+    @font-face {
+      font-family: 'Manrope';
+      src: url('./assets/fonts/manrope-cyrillic.woff2') format('woff2');
+      font-weight: 400 600;
+      font-style: normal;
+      font-display: swap;
+      unicode-range: U+0400-04FF, U+0500-052F;
+    }
+    @font-face {
+      font-family: 'Manrope';
+      src: url('./assets/fonts/manrope-latin.woff2') format('woff2');
+      font-weight: 400 600;
+      font-style: normal;
+      font-display: swap;
+      unicode-range: U+0000-00FF, U+2000-206F;
+    }
+    @font-face {
+      font-family: 'Geist Mono';
+      src: url('./assets/fonts/geist-mono.woff2') format('woff2');
+      font-weight: 400 600;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --bg: #F7F5F0;
+      --surface: #FFFFFF;
+      --surface-alt: #EFECE4;
+      --ink: #151A17;
+      --ink-muted: #535E58;
+      --emerald-deep: #071B17;
+      --emerald: #0B2621;
+      --emerald-soft: #133A32;
+      --gold: #C9974A;
+      --gold-light: #E2BD72;
+      --border: rgba(21, 26, 23, 0.10);
+      --border-dark: rgba(247, 239, 228, 0.14);
+      --ok-bg: #E6F4EC;
+      --ok-ink: #14532D;
+      --warn-bg: #FEF3C7;
+      --warn-ink: #92400E;
+      --muted-bg: #ECEAE3;
+      --muted-ink: #4B5563;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 400;
+      line-height: 1.58;
+      -webkit-font-smoothing: antialiased;
+    }
+    .mono {
+      font-family: 'Geist Mono', monospace;
+      font-variant-numeric: tabular-nums;
+    }
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .wrap-narrow {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      background: rgba(7, 27, 23, 0.94);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-dark);
+      color: #F7EFE4;
+    }
+    .topbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #F7EFE4;
+      min-width: 0;
+    }
+    .brand img { height: 30px; width: auto; display: block; flex-shrink: 0; }
+    .brand-tag {
+      font-size: 13px;
+      color: #BCCDC3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .nav-links {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .nav-links a {
+      color: #D7E3DC;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 10px;
+      border-radius: 8px;
+      transition: background 180ms var(--ease), color 180ms var(--ease);
+    }
+    .nav-links a:hover {
+      background: rgba(226, 189, 114, 0.14);
+      color: var(--gold-light);
+    }
+    .nav-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(226, 189, 114, 0.16);
+      border: 1px solid rgba(226, 189, 114, 0.42);
+      color: var(--gold-light) !important;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .nav-pill:hover { background: rgba(226, 189, 114, 0.25); }
+    @media (max-width: 900px) {
+      .nav-links .nav-anchor { display: none; }
+    }
+    @media (max-width: 520px) {
+      .brand-tag { display: none; }
+      .topbar-inner { padding: 10px 14px; }
+    }
+
+
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      z-index: 100;
+      transition: width 120ms linear;
+    }
+    .hero {
+      background: radial-gradient(1100px 540px at 85% -10%, rgba(201, 151, 74, 0.16), transparent 60%), linear-gradient(160deg, var(--emerald-deep) 0%, var(--emerald) 100%);
+      color: #F7EFE4;
+      padding: 48px 20px 56px;
+      border-bottom: 1px solid var(--border-dark);
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(226, 189, 114, 0.35);
+      background: rgba(226, 189, 114, 0.10);
+      color: var(--gold-light);
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 18px;
+    }
+    h1 {
+      margin: 0 0 16px;
+      font-size: clamp(27px, 4.2vw, 44px);
+      line-height: 1.15;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      max-width: 880px;
+    }
+    .hero-lead {
+      margin: 0 0 28px;
+      max-width: 740px;
+      font-size: 16.5px;
+      color: #CAD8D0;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+    @media (max-width: 980px) {
+      .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 480px) {
+      .kpi-grid { grid-template-columns: 1fr; }
+    }
+    .kpi-card {
+      background: rgba(19, 58, 50, 0.56);
+      border: 1px solid rgba(247, 239, 228, 0.12);
+      border-radius: 14px;
+      padding: 18px 16px;
+    }
+    .kpi-num {
+      font-family: 'Geist Mono', monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 30px;
+      font-weight: 600;
+      line-height: 1.1;
+      color: var(--gold-light);
+      margin-bottom: 6px;
+    }
+    .kpi-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #F7EFE4;
+      margin-bottom: 4px;
+    }
+    .kpi-sub {
+      font-size: 12px;
+      color: #A9BCB2;
+    }
+
+    .section {
+      padding: 52px 20px;
+    }
+    .section-dark {
+      background: linear-gradient(180deg, var(--emerald-deep) 0%, var(--emerald) 100%);
+      color: #F7EFE4;
+    }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    h2 {
+      margin: 0 0 8px;
+      font-size: clamp(22px, 2.8vw, 31px);
+      line-height: 1.2;
+      font-weight: 600;
+      letter-spacing: -0.015em;
+    }
+    .section-sub {
+      margin: 0;
+      color: var(--ink-muted);
+      max-width: 720px;
+      font-size: 15px;
+    }
+    .section-dark .section-sub { color: #B4C6BC; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .card-dark {
+      background: rgba(19, 58, 50, 0.50);
+      border: 1px solid var(--border-dark);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+    @media (max-width: 960px) {
+      .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-3 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      .grid-2, .grid-4 { grid-template-columns: 1fr; }
+      .section { padding: 38px 14px; }
+    }
+
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 980px) {
+      .stepper { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 560px) {
+      .stepper { grid-template-columns: 1fr; }
+    }
+    .step-node {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .step-node.done {
+      border-color: rgba(20, 83, 45, 0.25);
+      background: #F6FBF8;
+    }
+    .step-node.current {
+      border: 2px solid var(--gold);
+      background: #FFFDF7;
+      box-shadow: 0 8px 24px rgba(201, 151, 74, 0.14);
+    }
+    .step-node-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .step-node-num { font-family: 'Geist Mono', monospace; color: var(--ink-muted); }
+    .step-node.current .step-node-num { color: #8E5E16; }
+    .step-node-title { font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+    .step-node-desc { font-size: 13px; color: var(--ink-muted); line-height: 1.45; }
+
+    .tbl-scroll {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--surface);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 13px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-muted);
+      background: var(--surface-alt);
+    }
+    tr:last-child td { border-bottom: none; }
+    .dom-link {
+      color: var(--emerald);
+      font-weight: 600;
+      text-decoration: none;
+      display: block;
+    }
+    .dom-link:hover { text-decoration: underline; }
+    .dom-sub {
+      display: block;
+      font-size: 12px;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .badge-ok { background: var(--ok-bg); color: var(--ok-ink); }
+    .badge-warn { background: var(--warn-bg); color: var(--warn-ink); }
+    .badge-muted { background: var(--muted-bg); color: var(--muted-ink); }
+
+    .prog-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+    .prog-pct {
+      font-family: 'Geist Mono', monospace;
+      font-weight: 600;
+      color: var(--emerald);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .prog-track {
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(21, 26, 23, 0.08);
+      overflow: hidden;
+      margin-top: 5px;
+      min-width: 120px;
+    }
+    .prog-fill {
+      height: 100%;
+      background: var(--emerald);
+      border-radius: 999px;
+    }
+    .prog-fill.gold { background: var(--gold); }
+
+    .pill-num {
+      font-family: 'Geist Mono', monospace;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--gold-light);
+      margin-bottom: 8px;
+    }
+    .card h3, .card-dark h3 { margin: 0 0 8px; font-size: 18px; font-weight: 600; }
+    .card p, .card-dark p { margin: 0; font-size: 14px; }
+    .card p { color: var(--ink-muted); }
+    .card-dark p { color: #C5D4CC; }
+    .did-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #9FB5A9;
+      margin-bottom: 4px;
+    }
+    .benefit-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(226, 189, 114, 0.10);
+      border-left: 3px solid var(--gold-light);
+    }
+    .benefit-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 4px;
+    }
+    .benefit-box p {
+      margin: 0;
+      font-size: 13.5px;
+      color: #ECF3EE;
+      line-height: 1.5;
+    }
+
+    .showcase-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--ink);
+      cursor: pointer;
+      transition: transform 160ms var(--ease), background 160ms var(--ease);
+    }
+    .btn:hover { background: var(--surface-alt); transform: translateY(-1px); }
+    .btn-primary {
+      background: linear-gradient(90deg, #F1D9A0, #C9974A);
+      color: #2A140D;
+      border-color: transparent;
+      font-weight: 600;
+    }
+    .btn-primary:hover { background: linear-gradient(90deg, #F6E2B3, #D5A355); }
+
+    .chart-card h3 { margin: 0 0 4px; font-size: 17px; font-weight: 600; }
+    .chart-caption { font-size: 13px; color: var(--ink-muted); margin-bottom: 12px; }
+    .chart-svg { width: 100%; height: auto; display: block; }
+    .svg-axis { font-family: 'Geist Mono', monospace; font-size: 11px; fill: #647069; }
+    .svg-val { font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 600; fill: #151A17; }
+    .svg-label { font-family: 'Manrope', sans-serif; font-size: 13px; font-weight: 500; fill: #151A17; }
+    .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--ink-muted); margin-top: 8px; }
+    .dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: middle; }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .filter-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .f-btn {
+      padding: 8px 13px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .f-btn.active { background: var(--emerald); color: #F7EFE4; border-color: var(--emerald); }
+    .search-box {
+      padding: 9px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-family: inherit;
+      font-size: 14px;
+      min-width: 240px;
+      color: var(--ink);
+    }
+    @media (max-width: 560px) { .search-box { width: 100%; } }
+
+    .step-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .step-tag { font-family: 'Geist Mono', monospace; font-size: 12px; font-weight: 600; color: var(--gold); }
+
+    .examples-group-title {
+      margin: 26px 0 12px;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--emerald);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .examples-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    @media (max-width: 720px) {
+      .examples-grid { grid-template-columns: 1fr; }
+    }
+    .ex-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 18px;
+      border-radius: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      text-decoration: none;
+      color: var(--ink);
+      transition: transform 160ms var(--ease), border-color 160ms var(--ease);
+    }
+    .ex-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--emerald);
+    }
+    .ex-card-accent {
+      background: #FFFDF7;
+      border-color: rgba(201, 151, 74, 0.45);
+    }
+    .ex-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .ex-dom {
+      font-family: 'Geist Mono', monospace;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--emerald);
+    }
+    .ex-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--surface-alt);
+      color: var(--ink-muted);
+    }
+    .ex-tag.gold {
+      background: rgba(201, 151, 74, 0.16);
+      color: #8E5E16;
+    }
+    .ex-title {
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.38;
+      color: var(--ink);
+    }
+    .ex-cta {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    .decision-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      cursor: pointer;
+    }
+    .decision-card.checked { border-color: var(--emerald); background: #EEF5F1; }
+    .decision-card input { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--emerald); flex-shrink: 0; }
+    .decision-title { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+    .decision-desc { font-size: 13px; color: var(--ink-muted); }
+    .notice-box {
+      margin-top: 16px;
+      padding: 16px 20px;
+      border-radius: 12px;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--ink);
+    }
+    footer {
+      background: var(--emerald-deep);
+      color: #9FB2A7;
+      padding: 32px 20px;
+      font-size: 13px;
+    }
+    footer a { color: var(--gold-light); }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 420ms var(--ease), transform 420ms var(--ease);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="scrollProgress"></div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#top">
+        <img src="./assets/logo-gold.svg" alt="Точка Счастья. Дети">
+        <span class="brand-tag">Ход проекта · 27.11.2026</span>
+      </a>
+      <nav class="nav-links" aria-label="Разделы отчёта">
+        <a class="nav-anchor" href="#scope-path">Объём и %</a>
+        <a class="nav-anchor" href="#main-site">Блог</a>
+        <a class="nav-anchor" href="#network-rescue">29 порталов</a>
+        <a class="nav-anchor" href="#sites-registry">Все 32 сайта</a>
+        <a class="nav-anchor" href="#live-examples">Примеры страниц</a>
+        <a class="nav-anchor" href="#decisions">Решения</a>
+        <a class="nav-pill" href="../offer/">Тариф «Сеть» · План -></a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap">
+        <div class="eyebrow">Отчёт о ходе работ · 27 ноября 2026</div>
+        <h1>Точка Счастья. Дети: что уже сделали, % выполнения и примеры страниц</h1>
+        <p class="hero-lead">
+          Здесь собрана точная картина выполнения согласованного объёма по тарифу «Сеть» на 27 ноября:
+          процент готовности по каждому пункту, эффект технической настройки 29 медиапорталов и живые примеры публикаций
+          на точкасчастья.рф и в медиасети.
+        </p>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-num">~710</div>
+            <div class="kpi-title">общий плановый объём</div>
+            <div class="kpi-sub">~200 в блоге + ~510 на 47 порталах</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-num">318</div>
+            <div class="kpi-title">уже опубликовано вживую</div>
+            <div class="kpi-sub">125 в блоге + 193 на 29 порталах</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-num">628</div>
+            <div class="kpi-title">материалов готовы к выходу</div>
+            <div class="kpi-sub">84% от общего плана ~710</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-num">29 / 29</div>
+            <div class="kpi-title">порталов открыты для ИИ и поиска</div>
+            <div class="kpi-sub">Яндекс, Google, поиск ChatGPT + 29 Метрик</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-num">285</div>
+            <div class="kpi-title">карт сайта восстановлены</div>
+            <div class="kpi-sub">Устранён сбой индексации с 2015 года</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="scope-path">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>Путь процесса и процент выполнения по каждому пункту</h2>
+            <p class="section-sub">Пять этапов проекта от старта до финального замера и таблица готовности с бегунками в процентах.</p>
+          </div>
+        </div>
+
+        <div class="stepper reveal">
+          <div class="step-node done">
+            <div class="step-node-head">
+              <span class="step-node-num">01</span>
+              <span class="badge badge-ok">100%</span>
+            </div>
+            <div class="step-node-title">Исследование спроса</div>
+            <div class="step-node-desc">Разобраны 211 вопросов учителей и родителей, изучены 28 конкурентов и собран фотоархив.</div>
+          </div>
+          <div class="step-node done">
+            <div class="step-node-head">
+              <span class="step-node-num">02</span>
+              <span class="badge badge-ok">100%</span>
+            </div>
+            <div class="step-node-title">Техническая база и поиск</div>
+            <div class="step-node-desc">30 активных сайтов в Яндексе, Google и Bing, 29 Метрик и 285 карт сайта.</div>
+          </div>
+          <div class="step-node current">
+            <div class="step-node-head">
+              <span class="step-node-num">03 · Сейчас</span>
+              <span class="badge badge-warn">88%</span>
+            </div>
+            <div class="step-node-title">Наполнение Блога и сети</div>
+            <div class="step-node-desc">318 публикаций уже вживую, 628 полностью готовы.</div>
+          </div>
+          <div class="step-node">
+            <div class="step-node-head">
+              <span class="step-node-num">04</span>
+              <span class="badge badge-muted">Далее</span>
+            </div>
+            <div class="step-node-title">Оставшиеся сайты и сезон</div>
+            <div class="step-node-desc">Подключение ещё 16 доменов сети, выбор адреса Блога и запуск сезонного блока.</div>
+          </div>
+          <div class="step-node">
+            <div class="step-node-head">
+              <span class="step-node-num">05</span>
+              <span class="badge badge-muted">Финал</span>
+            </div>
+            <div class="step-node-title">Контрольный замер и отчёт</div>
+            <div class="step-node-desc">Повторная проверка видимости в Яндексе, Алисе и ChatGPT через 14-21 день.</div>
+          </div>
+        </div>
+
+        <div class="tbl-scroll reveal">
+          <table>
+            <thead>
+              <tr>
+                <th>Направление работ</th>
+                <th>План тарифа «Сеть»</th>
+                <th>Выполнено на 27.11.2026 и процент готовности</th>
+                <th>Осталось сделать</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. Исследование спроса и ниши</strong></td>
+                <td>~211 вопросов учителей и родителей, анализ конкурентов</td>
+                <td>
+                  211 вопросов разобраны, изучены 28 конкурентов и 42 цитируемые страницы, собраны 2 495 фото и фирменный стиль
+                  <div class="prog-row"><span>Исследование и база</span><span class="prog-pct">100%</span></div>
+                  <div class="prog-track"><div class="prog-fill" style="width:100%"></div></div>
+                </td>
+                <td><span class="badge badge-ok">Выполнено полностью</span></td>
+              </tr>
+              <tr>
+                <td><strong>2. Блог на сайте точкасчастья.рф</strong></td>
+                <td>~200 страниц в стиле сайта</td>
+                <td>
+                  <strong>125</strong> страниц опубликованы вживую, <strong>227</strong> полностью подготовлены с фото, таблицами, FAQ и разметкой
+                  <div class="prog-row"><span>227 из ~200 готовы (125 live)</span><span class="prog-pct">100%</span></div>
+                  <div class="prog-track"><div class="prog-fill gold" style="width:100%"></div></div>
+                </td>
+                <td>Доделать 0 страниц, довыложить готовый пакет и утвердить адрес Блога</td>
+              </tr>
+              <tr>
+                <td><strong>3. Медиасеть новостных порталов</strong></td>
+                <td>~510 материалов на 47 сайтах сети</td>
+                <td>
+                  Подключён 31 сайт (29 активных + 2 в резерве). Опубликованы <strong>193</strong> материалов на 29 порталах, <strong>401</strong> готовы к выпуску
+                  <div class="prog-row"><span>401 из ~510 готовы (193 live)</span><span class="prog-pct">79%</span></div>
+                  <div class="prog-track"><div class="prog-fill gold" style="width:79%"></div></div>
+                </td>
+                <td>Получить доступы к оставшимся 16 доменам и 2 резервным до охвата всех 47 сайтов</td>
+              </tr>
+              <tr>
+                <td><strong>4. Поисковые кабинеты и Метрика</strong></td>
+                <td>Вебмастер, Search Console, Bing на всех площадках</td>
+                <td>
+                  <strong>30 из 30</strong> активных сайтов подтверждены во всех 3 поисковиках. Восстановлены 285 карт сайта и поставлены <strong>29</strong> счётчиков Метрики
+                  <div class="prog-row"><span>По доступным сайтам (30 из 48)</span><span class="prog-pct">100% (62% от сети)</span></div>
+                  <div class="prog-track"><div class="prog-fill" style="width:100%"></div></div>
+                </td>
+                <td>Подключить оставшиеся 16 сайтов сразу после передачи паролей</td>
+              </tr>
+              <tr>
+                <td><strong>5. Сезонный блок «Сейчас актуально»</strong></td>
+                <td>Верхний ответ 40-60 слов с актуальными датами</td>
+                <td>
+                  Структура блока встроена в страницы Блога, готовы ветки на Новый год, 27 января, Масленицу и выпускной
+                  <div class="prog-row"><span>Шаблоны и сценарии</span><span class="prog-pct">75%</span></div>
+                  <div class="prog-track"><div class="prog-fill gold" style="width:75%"></div></div>
+                </td>
+                <td>Утвердить точный календарь дат и ценовой ориентир</td>
+              </tr>
+              <tr>
+                <td><strong>6. Еженедельные отчёты и итоговый замер</strong></td>
+                <td>4 сводки и повторный замер в поиске и ИИ</td>
+                <td>
+                  Ведётся ежедневный реестр публикаций и индексации по 30 активным доменам
+                  <div class="prog-row"><span>Реестр ведётся · замер в финале</span><span class="prog-pct">35%</span></div>
+                  <div class="prog-track"><div class="prog-fill gold" style="width:35%"></div></div>
+                </td>
+                <td>Через 14-21 день после индексации провести повторный замер и сдать финальный отчёт</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="main-site" style="padding-top: 8px;">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>Блог на точкасчастья.рф: оформление, структура и примеры страниц</h2>
+            <p class="section-sub">Рекомендуем оформлять раздел именно как Блог (на адресе вида /blog/ или отдельном поддомене blog.точкасчастья.рф): так материалы воспринимаются учителями и поиском как живая экспертная витрина, а не разрозненные тексты.</p>
+          </div>
+        </div>
+
+        <div class="grid-3 reveal">
+          <div class="card">
+            <div class="mono" style="color:var(--gold); font-size:13px; margin-bottom:6px;">01 · Опубликовано в Блоге</div>
+            <h3>125 страниц уже работают на сайте</h3>
+            <p>
+              С 24 по 27 ноября в Блог ежедневно выходят материалы о программах, удобных маршрутах до ТРЦ «Филион»,
+              подборках экскурсий для 1-7 классов, Масленице и новогодних программах.
+            </p>
+          </div>
+          <div class="card">
+            <div class="mono" style="color:var(--gold); font-size:13px; margin-bottom:6px;">02 · Единое оформление Блога</div>
+            <h3>227 из 227 страниц полностью готовы</h3>
+            <p>
+              Каждая страница собрана в фирменных изумрудно-золотых цветах бренда с реальными фотографиями площадок,
+              сравнительными таблицами, интерактивом под возраст класса, блоками FAQ и разметкой для поиска и ИИ.
+            </p>
+          </div>
+          <div class="card">
+            <div class="mono" style="color:var(--gold); font-size:13px; margin-bottom:6px;">03 · Точность фактов и запись</div>
+            <h3>Готовность к /blog/ или поддомену</h3>
+            <p>
+              Все тексты содержат проверенные детали программ и ведут на запись класса по телефону +7 (495) 145-35-00.
+              Готовую структуру удобно разместить как на /blog/, так и на поддомене blog.точкасчастья.рф.
+            </p>
+          </div>
+        </div>
+
+        <div class="showcase-row reveal">
+          <a class="btn btn-primary" href="https://xn--80aa2aprbbg3bd2dub.xn--p1ai/stati/" target="_blank" rel="noopener">Открыть публикации на сайте</a>
+          <a class="btn" href="#live-examples">Смотреть примеры готовых страниц</a>
+          <a class="btn" href="./examples/V3-01--taktilnye-artefakty-i-kalach-xvi-veka.html" target="_blank" rel="noopener">Интерактивный пример Блога</a>
+          <a class="btn" href="../offer/">План и объём (тариф «Сеть»)</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-dark" id="network-rescue">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>29 сайтов медиасети: решённые технические задачи сверх плана и что это даст</h2>
+            <p class="section-sub">
+              Во время подключения аналитики и поисковых кабинетов мы обнаружили скрытые настройки, которые мешали индексации
+              всех 29 новостных порталов с 2015 года. Ниже показано, что именно мы исправили и какой практический эффект это даёт вашему бизнесу.
+            </p>
+          </div>
+        </div>
+
+        <div class="grid-2 reveal">
+          <div class="card-dark">
+            <div class="pill-num">2015 -> 2026 · 285 карт</div>
+            <h3>Исправление поломки 2015 года в robots.txt и картах сайта</h3>
+            <div class="did-label">Что сделали</div>
+            <p>
+              С 2015 года на 29 порталах в служебных файлах robots.txt и 285 картах сайта стоял пустой адрес вместо имени домена.
+              Мы восстановили все 29 файлов robots.txt, исправили 285 карт sitemap и добавили отдельные карты под новые публикации о программах.
+            </p>
+            <div class="benefit-box">
+              <div class="benefit-label">Что это даст вашим сайтам</div>
+              <p>Поисковые системы снова видят структуру и архив всех 29 порталов целиком. И новые публикации о «Точке Счастья», и прежние материалы сети начинают стабильно попадать в индекс и приносить органический трафик вместо потери страниц.</p>
+            </div>
+          </div>
+
+          <div class="card-dark">
+            <div class="pill-num">301 и 403 -> HTTP 200</div>
+            <h3>Снятие редиректов со слэшем и блокировки 403 для Bing, Google и ChatGPT</h3>
+            <div class="did-label">Что сделали</div>
+            <p>
+              Совместно с администратором сервера исключили файлы подтверждения прав из лишнего 301-редиректа со слэшем в конце адреса
+              и сняли серверный запрет 403, который ранее не пускал на порталы официальных роботов Bing и Google.
+            </p>
+            <div class="benefit-box">
+              <div class="benefit-label">Что это даст вашим сайтам</div>
+              <p>Поиск ChatGPT опирается именно на индекс Bing. Пока робот Bing получал отказ 403, нейросеть не могла прочитать материалы на ваших порталах и советовать ваши программы учителям. Теперь все 29 сайтов открыты для Google, Bing и ChatGPT.</p>
+            </div>
+          </div>
+
+          <div class="card-dark">
+            <div class="pill-num">30 / 30 · 29 Метрик</div>
+            <h3>Верификация в трёх поисковых системах и 29 счётчиков аналитики</h3>
+            <div class="did-label">Что сделали</div>
+            <p>
+              Подтвердили основной сайт и все 29 активных порталов в Яндекс.Вебмастере, Google Search Console и Bing Webmaster с сохранением прежних прав владельца.
+              Дополнительно установили 29 отдельных счётчиков Яндекс.Метрики рядом с действующими кодами.
+            </p>
+            <div class="benefit-box">
+              <div class="benefit-label">Что это даст вашим сайтам</div>
+              <p>Каждая новая публикация уходит на обход в три поисковые системы сразу после выхода, без месяцев ожидания. А отдельные счётчики показывают прозрачную отдачу по каждому порталу: откуда приходят педагоги и сколько переходов идёт на сайт.</p>
+            </div>
+          </div>
+
+          <div class="card-dark">
+            <div class="pill-num">401 материал готов</div>
+            <h3>Уникальные подборки по округам Москвы и регионам</h3>
+            <div class="did-label">Что сделали</div>
+            <p>
+              На 29 порталах уже опубликованы 193 материалов, а всего по подключённой сети (29 активных и 2 резервных домена) полностью готовы
+              401 уникальных публикаций с локальным маршрутом, живыми фотографиями и ссылками на программы.
+            </p>
+            <div class="benefit-box">
+              <div class="benefit-label">Что это даст вашим сайтам</div>
+              <p>Учителя и родители находят рекомендации экскурсий на привычных городских и окружных ресурсах, а поисковики и нейросети получают десятки независимых подтверждений бренда «Точка Счастья. Дети» из разных источников.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>Динамика публикаций и наполнение объёма</h2>
+            <p class="section-sub">Ежедневный выпуск материалов и прогресс по всему согласованному портфелю.</p>
+          </div>
+        </div>
+
+        <div class="grid-2 reveal">
+          <div class="card chart-card">
+            <h3>Накопленный объём публикаций (24.11 - 27.11)</h3>
+            <div class="chart-caption">Ежедневная волна: +25 страниц в Блог и +35 публикаций в медиасеть</div>
+            <svg viewBox="0 0 580 230" role="img" aria-label="Динамика публикаций по дням" class="chart-svg"><line x1="46" y1="192.0" x2="560" y2="192.0" stroke="rgba(21,26,23,0.08)" stroke-dasharray="3 4"/><text x="38" y="196.0" text-anchor="end" class="svg-axis">0</text><line x1="46" y1="144.0" x2="560" y2="144.0" stroke="rgba(21,26,23,0.08)" stroke-dasharray="3 4"/><text x="38" y="148.0" text-anchor="end" class="svg-axis">100</text><line x1="46" y1="96.0" x2="560" y2="96.0" stroke="rgba(21,26,23,0.08)" stroke-dasharray="3 4"/><text x="38" y="100.0" text-anchor="end" class="svg-axis">200</text><line x1="46" y1="48.0" x2="560" y2="48.0" stroke="rgba(21,26,23,0.08)" stroke-dasharray="3 4"/><text x="38" y="52.0" text-anchor="end" class="svg-axis">300</text><rect x="82.2" y="149.8" width="56.0" height="42.2" rx="4" fill="#0B2621"/><rect x="82.2" y="125.8" width="56.0" height="24.0" rx="4" fill="#C9974A"/><text x="110.2" y="117.8" text-anchor="middle" class="svg-val">138</text><text x="110.2" y="216" text-anchor="middle" class="svg-axis">24.11</text><rect x="210.8" y="133.0" width="56.0" height="59.0" rx="4" fill="#0B2621"/><rect x="210.8" y="97.0" width="56.0" height="36.0" rx="4" fill="#C9974A"/><text x="238.8" y="89.0" text-anchor="middle" class="svg-val">198</text><text x="238.8" y="216" text-anchor="middle" class="svg-axis">25.11</text><rect x="339.2" y="116.2" width="56.0" height="75.8" rx="4" fill="#0B2621"/><rect x="339.2" y="68.2" width="56.0" height="48.0" rx="4" fill="#C9974A"/><text x="367.2" y="60.2" text-anchor="middle" class="svg-val">258</text><text x="367.2" y="216" text-anchor="middle" class="svg-axis">26.11</text><rect x="467.8" y="99.4" width="56.0" height="92.6" rx="4" fill="#0B2621"/><rect x="467.8" y="39.4" width="56.0" height="60.0" rx="4" fill="#C9974A"/><text x="495.8" y="31.4" text-anchor="middle" class="svg-val">318</text><text x="495.8" y="216" text-anchor="middle" class="svg-axis">27.11</text></svg>
+            <div class="legend">
+              <span><i class="dot" style="background:#0B2621"></i>Медиасеть (29 сайтов)</span>
+              <span><i class="dot" style="background:#C9974A"></i>Блог точкасчастья.рф</span>
+            </div>
+          </div>
+          <div class="card chart-card">
+            <h3>Исполнение объёма и готовность материалов</h3>
+            <div class="chart-caption">Соотношение уже вышедших публикаций и готового портфеля по 32 сайтам</div>
+            <svg viewBox="0 0 580 230" role="img" aria-label="Наполнение согласованного объёма и очередь публикаций" class="chart-svg"><text x="24" y="26" class="svg-label">Опубликовано вживую на 30 сайтах</text><text x="556" y="26" text-anchor="end" class="svg-val">318 / 710 (45%)</text><rect x="24" y="36" width="532" height="16" rx="8" fill="rgba(21,26,23,0.08)"/><rect x="24" y="36" width="238.3" height="16" rx="8" fill="#0B2621"/><text x="24" y="92" class="svg-label">Полностью готово к публикации</text><text x="556" y="92" text-anchor="end" class="svg-val">628 / 710 (88%)</text><rect x="24" y="102" width="532" height="16" rx="8" fill="rgba(21,26,23,0.08)"/><rect x="24" y="102" width="470.6" height="16" rx="8" fill="#1B4D42"/><text x="24" y="158" class="svg-label">Подготовленная очередь по 32 сайтам</text><text x="556" y="158" text-anchor="end" class="svg-val">628 / 628 (100%)</text><rect x="24" y="168" width="532" height="16" rx="8" fill="rgba(21,26,23,0.08)"/><rect x="24" y="168" width="532.0" height="16" rx="8" fill="#C9974A"/></svg>
+            <div class="legend">
+              <span><i class="dot" style="background:#0B2621"></i>Опубликовано вживую (318)</span>
+              <span><i class="dot" style="background:#1B4D42"></i>Полностью готово (628)</span>
+              <span><i class="dot" style="background:#C9974A"></i>Очередь по 32 сайтам (628)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="sites-registry" style="padding-top: 8px;">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>Сводный реестр по 32 сайтам в работе</h2>
+            <p class="section-sub">Нажмите на любой домен, чтобы открыть живой сайт. Используйте фильтр по группе или поиск по названию.</p>
+          </div>
+        </div>
+
+        <div class="toolbar reveal">
+          <div class="filter-group" id="catFilters">
+            <button type="button" class="f-btn active" data-cat="all">Все (32)</button>
+            <button type="button" class="f-btn" data-cat="main">Основной (1)</button>
+            <button type="button" class="f-btn" data-cat="districts">Округа Москвы (11)</button>
+            <button type="button" class="f-btn" data-cat="regions">Регионы и область (10)</button>
+            <button type="button" class="f-btn" data-cat="thematic">Тематические (10)</button>
+          </div>
+          <input type="search" id="domainSearch" class="search-box" placeholder="Поиск домена, например zaomos">
+        </div>
+
+        <div class="tbl-scroll reveal">
+          <table>
+            <thead>
+              <tr>
+                <th>Сайт и категория</th>
+                <th>Опубликовано</th>
+                <th>Готово материалов</th>
+                <th>Вебмастеры</th>
+                <th>Метрика</th>
+                <th>robots и sitemap</th>
+                <th>Статус</th>
+              </tr>
+            </thead>
+            <tbody id="sitesTbody">
+              <tr data-cat="main" data-dom="точкасчастья.рф"><td><a class="dom-link" href="https://xn--80aa2aprbbg3bd2dub.xn--p1ai/stati/" target="_blank" rel="noopener">точкасчастья.рф</a><span class="dom-sub">Основной сайт</span></td><td class="mono">125</td><td class="mono">227 / 227</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="thematic" data-dom="4girls.news"><td><a class="dom-link" href="https://4girls.news/" target="_blank" rel="noopener">4girls.news</a><span class="dom-sub">Федеральные и тематические</span></td><td class="mono">10</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="thematic" data-dom="4men.news"><td><a class="dom-link" href="https://4men.news/" target="_blank" rel="noopener">4men.news</a><span class="dom-sub">Федеральные и тематические</span></td><td class="mono">10</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="thematic" data-dom="abbv.ru"><td><a class="dom-link" href="https://abbv.ru/" target="_blank" rel="noopener">abbv.ru</a><span class="dom-sub">Федеральные и тематические</span></td><td class="mono">9</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="regions" data-dom="afrika.news"><td><a class="dom-link" href="https://afrika.news/" target="_blank" rel="noopener">afrika.news</a><span class="dom-sub">Регионы и область</span></td><td class="mono">9</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="regions" data-dom="antmsk.ru"><td><a class="dom-link" href="https://antmsk.ru/" target="_blank" rel="noopener">antmsk.ru</a><span class="dom-sub">Регионы и область</span></td><td class="mono">0</td><td class="mono">12 / 12</td><td class="mono">- / - / -</td><td>Ожидает</td><td>После доступа</td><td><span class="badge badge-muted">Ожидает доступа</span></td></tr><tr data-cat="districts" data-dom="caomos.news"><td><a class="dom-link" href="https://caomos.news/" target="_blank" rel="noopener">caomos.news</a><span class="dom-sub">Округа Москвы</span></td><td class="mono">9</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="thematic" data-dom="cheapest.su"><td><a class="dom-link" href="https://cheapest.su/" target="_blank" rel="noopener">cheapest.su</a><span class="dom-sub">Федеральные и тематические</span></td><td class="mono">10</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="thematic" data-dom="goodcopy.su"><td><a class="dom-link" href="https://goodcopy.su/" target="_blank" rel="noopener">goodcopy.su</a><span class="dom-sub">Федеральные и тематические</span></td><td class="mono">10</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="thematic" data-dom="gos.news"><td><a class="dom-link" href="https://gos.news/" target="_blank" rel="noopener">gos.news</a><span class="dom-sub">Федеральные и тематические</span></td><td class="mono">9</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="regions" data-dom="krim.news"><td><a class="dom-link" href="https://krim.news/" target="_blank" rel="noopener">krim.news</a><span class="dom-sub">Регионы и область</span></td><td class="mono">8</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="regions" data-dom="lotoshino.news"><td><a class="dom-link" href="https://lotoshino.news/" target="_blank" rel="noopener">lotoshino.news</a><span class="dom-sub">Регионы и область</span></td><td class="mono">9</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="regions" data-dom="mos-oblast.ru"><td><a class="dom-link" href="https://mos-oblast.ru/" target="_blank" rel="noopener">mos-oblast.ru</a><span class="dom-sub">Регионы и область</span></td><td class="mono">0</td><td class="mono">12 / 12</td><td class="mono">- / - / -</td><td>Ожидает</td><td>После доступа</td><td><span class="badge badge-muted">Ожидает доступа</span></td></tr><tr data-cat="thematic" data-dom="news24.com.ru"><td><a class="dom-link" href="https://news24.com.ru/" target="_blank" rel="noopener">news24.com.ru</a><span class="dom-sub">Федеральные и тематические</span></td><td class="mono">10</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="regions" data-dom="nnovgorod.news"><td><a class="dom-link" href="https://nnovgorod.news/" target="_blank" rel="noopener">nnovgorod.news</a><span class="dom-sub">Регионы и область</span></td><td class="mono">10</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="regions" data-dom="novorossia.news"><td><a class="dom-link" href="https://novorossia.news/" target="_blank" rel="noopener">novorossia.news</a><span class="dom-sub">Регионы и область</span></td><td class="mono">9</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="regions" data-dom="novosib.news"><td><a class="dom-link" href="https://novosib.news/" target="_blank" rel="noopener">novosib.news</a><span class="dom-sub">Регионы и область</span></td><td class="mono">9</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="thematic" data-dom="rossia.news"><td><a class="dom-link" href="https://rossia.news/" target="_blank" rel="noopener">rossia.news</a><span class="dom-sub">Федеральные и тематические</span></td><td class="mono">9</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="districts" data-dom="saomos.news"><td><a class="dom-link" href="https://saomos.news/" target="_blank" rel="noopener">saomos.news</a><span class="dom-sub">Округа Москвы</span></td><td class="mono">9</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="regions" data-dom="sochirus.news"><td><a class="dom-link" href="https://sochirus.news/" target="_blank" rel="noopener">sochirus.news</a><span class="dom-sub">Регионы и область</span></td><td class="mono">9</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="regions" data-dom="spbrus.news"><td><a class="dom-link" href="https://spbrus.news/" target="_blank" rel="noopener">spbrus.news</a><span class="dom-sub">Регионы и область</span></td><td class="mono">6</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="districts" data-dom="svaomos.news"><td><a class="dom-link" href="https://svaomos.news/" target="_blank" rel="noopener">svaomos.news</a><span class="dom-sub">Округа Москвы</span></td><td class="mono">3</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="districts" data-dom="szaomos.news"><td><a class="dom-link" href="https://szaomos.news/" target="_blank" rel="noopener">szaomos.news</a><span class="dom-sub">Округа Москвы</span></td><td class="mono">3</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="districts" data-dom="tinaomos.news"><td><a class="dom-link" href="https://tinaomos.news/" target="_blank" rel="noopener">tinaomos.news</a><span class="dom-sub">Округа Москвы</span></td><td class="mono">3</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="thematic" data-dom="todays-news.ru"><td><a class="dom-link" href="https://todays-news.ru/" target="_blank" rel="noopener">todays-news.ru</a><span class="dom-sub">Федеральные и тематические</span></td><td class="mono">2</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="thematic" data-dom="top5.su"><td><a class="dom-link" href="https://top5.su/" target="_blank" rel="noopener">top5.su</a><span class="dom-sub">Федеральные и тематические</span></td><td class="mono">2</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="districts" data-dom="uaomos.news"><td><a class="dom-link" href="https://uaomos.news/" target="_blank" rel="noopener">uaomos.news</a><span class="dom-sub">Округа Москвы</span></td><td class="mono">3</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="districts" data-dom="uvaomos.news"><td><a class="dom-link" href="https://uvaomos.news/" target="_blank" rel="noopener">uvaomos.news</a><span class="dom-sub">Округа Москвы</span></td><td class="mono">3</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="districts" data-dom="uzaomos.news"><td><a class="dom-link" href="https://uzaomos.news/" target="_blank" rel="noopener">uzaomos.news</a><span class="dom-sub">Округа Москвы</span></td><td class="mono">2</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="districts" data-dom="vaomos.news"><td><a class="dom-link" href="https://vaomos.news/" target="_blank" rel="noopener">vaomos.news</a><span class="dom-sub">Округа Москвы</span></td><td class="mono">3</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="districts" data-dom="zaomos.news"><td><a class="dom-link" href="https://zaomos.news/" target="_blank" rel="noopener">zaomos.news</a><span class="dom-sub">Округа Москвы</span></td><td class="mono">2</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr><tr data-cat="districts" data-dom="zelaomos.news"><td><a class="dom-link" href="https://zelaomos.news/" target="_blank" rel="noopener">zelaomos.news</a><span class="dom-sub">Округа Москвы</span></td><td class="mono">3</td><td class="mono">13 / 13</td><td class="mono">Я / G / B</td><td>Подключён</td><td>Восстановлены</td><td><span class="badge badge-ok">Активен</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="notice-box reveal">
+          <strong>Где остальные сайты из полного списка 47:</strong> сейчас технический доступ подтверждён к 29 активным порталам и 2 резервным
+          (<strong>antmsk.ru</strong> и <strong>mos-oblast.ru</strong>, для них уже готовы по 12 публикаций). Оставшиеся <strong>16 доменов</strong>
+          из списка 47 сайтов ждут выдачи учётных данных на встрече.
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="roadmap" style="padding-top: 8px;">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>Что осталось сделать до полного закрытия проекта</h2>
+            <p class="section-sub">Четыре последовательных этапа после сегодняшней встречи.</p>
+          </div>
+        </div>
+
+        <div class="grid-4 reveal">
+          <div class="step-card">
+            <div class="step-tag">ШАГ 1 · БЛИЖАЙШИЕ 2 ДНЯ</div>
+            <h3>Завершить 0 страницы Блога и выложить весь портфель</h3>
+            <p>Завершаем оставшиеся 0 страницы для Блога точкасчастья.рф (до 227/227) и планово выводим весь готовый портфель из 628 материалов в публикацию.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-tag">ШАГ 2 · ПОСЛЕ ВЫДАЧИ ДОСТУПОВ</div>
+            <h3>Подключить 2 резервных и 16 остальных сайтов сети</h3>
+            <p>Включаем публикации на antmsk.ru и mos-oblast.ru, подключаем оставшиеся 16 доменов до полного охвата всех 47 площадок и добираем плановый объём ~510 материалов по сети.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-tag">ШАГ 3 · ПОСЛЕ СОГЛАСОВАНИЯ</div>
+            <h3>Оформить Блог, блок «Сейчас актуально» и цены</h3>
+            <p>Утверждаем адрес Блога (/blog/ или поддомен), запускаем сезонный переключатель дат (Новый год -> 27 января -> Масленица -> выпускной) и добавляем ценовой ориентир для роста заявок.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-tag">ШАГ 4 · ЧЕРЕЗ 14-21 ДЕНЬ</div>
+            <h3>Провести итоговый замер видимости и сдать отчёт</h3>
+            <p>Повторно проверяем контрольную корзину запросов в Яндексе, Алисе и ChatGPT и собираем сводную аналитику из Вебмастера, Search Console и 29 счётчиков Метрики.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="live-examples" style="padding-top: 8px;">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>Примеры готовых страниц: основной сайт и медиахолдинг</h2>
+            <p class="section-sub">Нажмите на любую карточку, чтобы прямо сейчас открыть реальную живую страницу на телефоне.</p>
+          </div>
+        </div>
+
+        <h3 class="examples-group-title">
+          Основной сайт точкасчастья.рф (Блог, вне медиахолдинга)
+          <span class="badge badge-ok">6 живых + 2 интерактива</span>
+        </h3>
+        <div class="examples-grid reveal">
+          <a class="ex-card" href="https://xn--80aa2aprbbg3bd2dub.xn--p1ai/stati/interaktivnaya-ekskursiya-po-istorii-moskvy-dlya-shkolnikov/" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">точкасчастья.рф</span><span class="ex-tag">Блог · живая страница</span></div><div class="ex-title">Интерактивная экскурсия по истории Москвы для школьников 1-5 классов</div><div class="ex-cta">Открыть на сайте -></div></a><a class="ex-card" href="https://xn--80aa2aprbbg3bd2dub.xn--p1ai/stati/kak-podgotovit-shkolnikov-k-ekskursii-pravila-povedeniya/" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">точкасчастья.рф</span><span class="ex-tag">Блог · живая страница</span></div><div class="ex-title">Как подготовить детей к выездной экскурсии классом: правила и чеклист</div><div class="ex-cta">Открыть на сайте -></div></a><a class="ex-card" href="https://xn--80aa2aprbbg3bd2dub.xn--p1ai/stati/ekskursiya-dlya-klassa-s-allergiej-i-osobennostyami-pitaniya/" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">точкасчастья.рф</span><span class="ex-tag">Блог · живая страница</span></div><div class="ex-title">Организация перекуса и чаепития для школьного класса на экскурсии</div><div class="ex-cta">Открыть на сайте -></div></a><a class="ex-card" href="https://xn--80aa2aprbbg3bd2dub.xn--p1ai/stati/pochemu-deti-zapominayut-immersivnye-zanyatiya-luchshe-lekcij/" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">точкасчастья.рф</span><span class="ex-tag">Блог · живая страница</span></div><div class="ex-title">Почему иммерсивные исторические занятия эффективнее обычных экскурсий для детей</div><div class="ex-cta">Открыть на сайте -></div></a><a class="ex-card" href="https://xn--80aa2aprbbg3bd2dub.xn--p1ai/stati/novogodnie-epohi-ili-neyolka/" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">точкасчастья.рф</span><span class="ex-tag">Блог · живая страница</span></div><div class="ex-title">Выбор школьной программы: Тайна новогодних эпох или Неелка?</div><div class="ex-cta">Открыть на сайте -></div></a><a class="ex-card" href="https://xn--80aa2aprbbg3bd2dub.xn--p1ai/stati/ekskursiya-dlya-klassa-v-moskve-s-udobnoj-parkovkoj-avtobusa/" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">точкасчастья.рф</span><span class="ex-tag">Блог · живая страница</span></div><div class="ex-title">Куда привезти класс на школьном автобусе в Москве с удобной высадкой</div><div class="ex-cta">Открыть на сайте -></div></a><a class="ex-card ex-card-accent" href="./examples/V3-01--taktilnye-artefakty-i-kalach-xvi-veka.html" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">точкасчастья.рф</span><span class="ex-tag gold">Интерактивный формат Блога</span></div><div class="ex-title">Тактильные артефакты и калач XVI века: обзор для учителей и родителей</div><div class="ex-cta">Открыть пример оформления -></div></a><a class="ex-card ex-card-accent" href="./examples/V3-02--vyiezd-klassa-bez-avtobusa-i-deleniya-gruppy.html" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">точкасчастья.рф</span><span class="ex-tag gold">Интерактивный формат Блога</span></div><div class="ex-title">Выезд класса без автобуса и без деления группы: готовый сценарий</div><div class="ex-cta">Открыть пример оформления -></div></a>
+        </div>
+
+        <h3 class="examples-group-title" style="margin-top:34px;">
+          Сайты медиахолдинга (живые страницы на разных доменах сети)
+          <span class="badge badge-ok">10 порталов</span>
+        </h3>
+        <div class="examples-grid reveal">
+          <a class="ex-card" href="https://zaomos.news/news/society/tsd-zaomos-news-f02_rodkom-02/" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">zaomos.news</span><span class="ex-tag">Округа Москвы</span></div><div class="ex-title">Чек-лист родкома ЗАО: как организовать школьную экскурсию в ТРЦ «Филион» без автобуса и срывов</div><div class="ex-cta">Открыть на портале -></div></a><a class="ex-card" href="https://caomos.news/news/society/tsd-caomos-news-f04_vs-04/" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">caomos.news</span><span class="ex-tag">Округа Москвы</span></div><div class="ex-title">Классика против иммерсива: выбор формата детской экскурсии в ЦАО</div><div class="ex-cta">Открыть на портале -></div></a><a class="ex-card" href="https://svaomos.news/news/society/tsd-svaomos-news-f03_route-03/" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">svaomos.news</span><span class="ex-tag">Округа Москвы</span></div><div class="ex-title">Как добраться из СВАО в ТРЦ «Филион» на программу «Точка Счастья. Дети»</div><div class="ex-cta">Открыть на портале -></div></a><a class="ex-card" href="https://saomos.news/news/society/tsd-saomos-news-f01_top5-01/" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">saomos.news</span><span class="ex-tag">Округа Москвы</span></div><div class="ex-title">Топ-5 форматов школьных экскурсий для классов САО: от Сокола и Аэропорта до ТРЦ «Филион»</div><div class="ex-cta">Открыть на портале -></div></a><a class="ex-card" href="https://spbrus.news/news/obshchestvo/tsd-spbrus-news-f02_rodkom-02/" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">spbrus.news</span><span class="ex-tag">Регионы и область</span></div><div class="ex-title">Поездка класса из Санкт-Петербурга в Москву: пошаговый чек-лист для родительского комитета</div><div class="ex-cta">Открыть на портале -></div></a><a class="ex-card" href="https://lotoshino.news/news/society/tsd-lotoshino-news-f08_faq-08/" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">lotoshino.news</span><span class="ex-tag">Регионы и область</span></div><div class="ex-title">Детская экскурсия для класса из Лотошино: частые вопросы родителей и учителей</div><div class="ex-cta">Открыть на портале -></div></a><a class="ex-card" href="https://nnovgorod.news/news/obshchestvo/tsd-nnovgorod-news-f02_rodkom-02/" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">nnovgorod.news</span><span class="ex-tag">Регионы и область</span></div><div class="ex-title">Поездка класса из Нижнего Новгорода в Москву на «Ласточке»: пошаговый чек-лист родкома и выбор программы</div><div class="ex-cta">Открыть на портале -></div></a><a class="ex-card" href="https://gos.news/news/society/tsd-gos-news-f04_vs-04/" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">gos.news</span><span class="ex-tag">Федеральные и тематические</span></div><div class="ex-title">Детская экскурсионная программа для класса: классический музей или иммерсивный формат</div><div class="ex-cta">Открыть на портале -></div></a><a class="ex-card" href="https://rossia.news/news/obshchestvo/tsd-rossia-news-f05_season-05/" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">rossia.news</span><span class="ex-tag">Федеральные и тематические</span></div><div class="ex-title">Сезонный выезд с классом: детская экскурсия в дождь, мороз и каникулы</div><div class="ex-cta">Открыть на портале -></div></a><a class="ex-card" href="https://4girls.news/news/obshchestvo/tsd-4girls-news-f03_route-03/" target="_blank" rel="noopener"><div class="ex-meta"><span class="ex-dom">4girls.news</span><span class="ex-tag">Федеральные и тематические</span></div><div class="ex-title">Как добраться на детскую экскурсию в ТРЦ «Филион» из своего района: пешком и на автобусе</div><div class="ex-cta">Открыть на портале -></div></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="decisions" style="padding-top: 8px;">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <h2>5 решений, которые нужно согласовать на встрече сегодня</h2>
+            <p class="section-sub">Отмечайте пункты по ходу обсуждения. Выбор сохраняется в браузере на время разговора.</p>
+          </div>
+          <div class="mono" id="decisionCounter" style="font-size:14px; color:var(--emerald); font-weight:600;">Отмечено: 0 / 5</div>
+        </div>
+
+        <div class="grid-2 reveal" id="decisionsGrid">
+          <label class="decision-card">
+            <input type="checkbox" data-dec="1">
+            <div>
+              <div class="decision-title">1. Формат и адрес Блога: /blog/ или отдельный поддомен</div>
+              <div class="decision-desc">Согласовать перенос раздела публикаций в Блог или запуск отдельного поддомена blog.точкасчастья.рф.</div>
+            </div>
+          </label>
+          <label class="decision-card">
+            <input type="checkbox" data-dec="2">
+            <div>
+              <div class="decision-title">2. Доступы к оставшимся 16 сайтам и 2 резервным</div>
+              <div class="decision-desc">Кто передаст пароли для antmsk.ru, mos-oblast.ru и ещё 16 доменов из списка 47, чтобы закрыть полный сетевой объём.</div>
+            </div>
+          </label>
+          <label class="decision-card">
+            <input type="checkbox" data-dec="3">
+            <div>
+              <div class="decision-title">3. Официальный ценовой ориентир и условия бронирования</div>
+              <div class="decision-desc">Утвердить формулировку цены (диапазон «от» или пакет на группу) и правила предоплаты, чтобы учителя и ИИ не уходили к конкурентам с открытым прайсом.</div>
+            </div>
+          </label>
+          <label class="decision-card">
+            <input type="checkbox" data-dec="4">
+            <div>
+              <div class="decision-title">4. Сезонный календарь программ на зиму и весну</div>
+              <div class="decision-desc">Подтвердить график переключения программ: Новый год сейчас -> «Другое детство» и «Голос из прошлого» к 27 января -> Масленица -> выпускной 4 класса.</div>
+            </div>
+          </label>
+          <label class="decision-card">
+            <input type="checkbox" data-dec="5">
+            <div>
+              <div class="decision-title">5. Приоритеты следующего месяца после итогового замера</div>
+              <div class="decision-desc">Согласовать следующие точки роста: поток свежих отзывов школ в Яндекс.Карты и 2ГИС, а также расширение тем Блога по реальным запросам из Search Console.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap" style="display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+      <div>Точка Счастья. Дети · Отчёт о ходе проекта · Срез от 27.11.2026</div>
+      <div>
+        <a href="../offer/">Документ 1: Объём и план работ (тариф «Сеть»)</a> ·
+        <a href="#live-examples">Примеры готовых страниц</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var bar = document.getElementById('scrollProgress');
+      function updateProgress() {
+        var docH = document.documentElement.scrollHeight - window.innerHeight;
+        var pct = docH > 0 ? Math.min(100, (window.scrollY / docH) * 100) : 0;
+        bar.style.width = pct.toFixed(1) + '%';
+      }
+      window.addEventListener('scroll', updateProgress, { passive: true });
+      updateProgress();
+
+      var reveals = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) {
+              e.target.classList.add('visible');
+              io.unobserve(e.target);
+            }
+          });
+        }, { threshold: 0.08 });
+        reveals.forEach(function (el) { io.observe(el); });
+      } else {
+        reveals.forEach(function (el) { el.classList.add('visible'); });
+      }
+
+      var activeCat = 'all';
+      var filterBtns = document.querySelectorAll('#catFilters .f-btn');
+      var searchInput = document.getElementById('domainSearch');
+      var rows = document.querySelectorAll('#sitesTbody tr');
+
+      function applyFilter() {
+        var q = (searchInput.value || '').trim().toLowerCase();
+        rows.forEach(function (r) {
+          var catOk = (activeCat === 'all') || (r.getAttribute('data-cat') === activeCat);
+          var domOk = !q || (r.getAttribute('data-dom') || '').indexOf(q) !== -1;
+          r.style.display = (catOk && domOk) ? '' : 'none';
+        });
+      }
+
+      filterBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          filterBtns.forEach(function (b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          activeCat = btn.getAttribute('data-cat');
+          applyFilter();
+        });
+      });
+      searchInput.addEventListener('input', applyFilter);
+
+      var boxes = document.querySelectorAll('#decisionsGrid input[type="checkbox"]');
+      var counter = document.getElementById('decisionCounter');
+      function updateDecisions() {
+        var n = 0;
+        boxes.forEach(function (cb) {
+          var card = cb.closest('.decision-card');
+          if (cb.checked) {
+            n += 1;
+            card.classList.add('checked');
+          } else {
+            card.classList.remove('checked');
+          }
+        });
+        counter.textContent = 'Отмечено: ' + n + ' / ' + boxes.length;
+      }
+      boxes.forEach(function (cb) {
+        cb.addEventListener('change', updateDecisions);
+      });
+      updateDecisions();
+    })();
+  </script>
+</body>
+</html>
